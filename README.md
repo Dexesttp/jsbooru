@@ -84,10 +84,10 @@ The goal is to use 100% Javascript/NodeJS librairies.
   - As such, there might be an already created MongoDB implementation hidden behind a server config down the line.
 - [Express](http://expressjs.com/)
   - ExpressJS is THE reference for NodeJS servers.
-- [ECT](http://ectjs.com/)
-  - ECT is a very cool template engine that, like most Javascript template engines, allows to process them client-side or server-side.
-  - In addition, ECT has a server-side compilation phase and a client-side execution phase.
-  - ECT is advertised as having very good performances. We never tried it before, so it is an occasion to test it.
+- [VueJS](http://vuejs.org/)
+  - VueJS is one of the rising front-end presenters in the market.
+  - It is agremented of several complents for ease-of-use.
+    - [vue2-autocomplete](https://github.com/BosNaufal/vue2-autocomplete) adds autocompletion for search results.
 
 This list is very likely to expand or evolve as the project grows.
 
