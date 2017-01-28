@@ -1,0 +1,14 @@
+root = true
+
+[*]
+end_of_line = cr,lf
+insert_final_newlne = true
+
+[*.js]
+charset = utf-8
+indent_style = space
+indent_size = 4
+
+[{package.json,README.md}]
+indent_style = space
+indent_size = 2
