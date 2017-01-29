@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 
 const config = {};
@@ -8,9 +9,13 @@ exports.initConfig = function(extConfig) {
         var configFilePath = path.resolve(__dirname, "../..", "config.json");
         var configContents = fs.readFileSync(configFilePath, 'utf8');
         console.log(`Found configuration file : ${configFilePath}`);
-        fileConfig = JSON.parse(configContents);
+        try {
+            fileConfig = JSON.parse(configContents);
+        } catch(e) {
+            console.log(`Invalid data: ${configFilePath} does not contain a valid JSON string.`);
+        }
     } catch(e) {
-        // NO OP
+        console.log(`No configuraton file found : ${configFilePath}`);
     }
     extConfig = extConfig || fileConfig;
     config.database = path.resolve(__dirname, "../../", extConfig.database || "database");
