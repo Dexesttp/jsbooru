@@ -39,30 +39,13 @@ var Search = Vue.component('main-search', {
                         tags: image.tags ? image.tags.join(" ") : "",
                     };
                 });
-                self.tags = [];
-                json.result
-                    .reduce(function(prev, image) {return prev.concat(image.tags || []);}, [])
-                    .filter(function(i, idx, arr) {return arr.indexOf(i) === idx; })
-                    .forEach(function(tagName) {
-                        var ajax = new XMLHttpRequest();
-                        ajax.open('GET', `/api/tag/${tagName}`);
-                        ajax.addEventListener('loadend', function(data) {
-                            var json = JSON.parse(this.responseText);
-                            if(self.tags.every(function(t) {
-                                return t.name !== json.name;
-                            })) {
-                                self.tags.push(json);
-                                self.tags = self.tags.sort(function(a, b) {
-                                    var nameA = a.name.toUpperCase();
-                                    var nameB = b.name.toUpperCase();
-                                    if (nameA < nameB)return -1;
-                                    if (nameA > nameB)return 1;
-                                    return 0;
-                                });
-                            }
-                        });
-                        ajax.send();
-                    });
+                self.tags = json.tags.sort(function(a, b) {
+                    var nameA = a.name.toUpperCase();
+                    var nameB = b.name.toUpperCase();
+                    if (nameA < nameB)return -1;
+                    if (nameA > nameB)return 1;
+                    return 0;
+                });
             });
             ajax.send();
         },

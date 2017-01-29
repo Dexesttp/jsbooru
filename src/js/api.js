@@ -10,6 +10,7 @@ router.get("/image",require("./api/get-images-by-tags"));
 // POST
 router.post("/tag/:name", require("./api/post-new-tag"));
 router.post("/image/:id/:tagname", require("./api/post-new-tag-on-image"));
+router.post("/image/:id", require("./api/post-value-on-image"));
 
 const postByUrl = require("./api/post-new-image-by-url");
 const postByFile = require("./api/post-new-image-by-file-contents");
@@ -22,7 +23,7 @@ router.post("/image", function(req, res) {
 });
 
 // DELETE
-router.delete("/api/image/:id", require("./api/delete-image-by-id"));
-router.delete("/api/image/:id/:tagname", require("./api/delete-tag-from-image"));
+router.delete("/image/:id", require("./api/delete-image-by-id"));
+router.delete("/image/:id/:tagname", require("./api/delete-tag-from-image"));
 
 module.exports = router;

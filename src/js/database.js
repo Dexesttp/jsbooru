@@ -57,8 +57,17 @@ exports.deleteTag = function(pictureID, tagName) {
     exports.images.update({ _id: pictureID }, { $pull: {tags: tagName} });
 }
 
-exports.updatePicture = function(pictureID, pictureData) {
-    exports.images.update({ id: pictureID }, { $set: pictureData });
+exports.updatePicture = function(pictureID, pictureData, callback) {
+    exports.images.update(
+        { _id: pictureID },
+        { $set: pictureData },
+    function(err, result) {
+        if(err) {
+            console.log(err);
+            throw new Error(`Could not update the picture ${pictureID} with the values ${pictureData}`);
+        }
+        callback();
+    });
 }
 
 exports.getCountByTagList = function(tagList, callback) {

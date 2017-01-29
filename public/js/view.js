@@ -21,22 +21,12 @@ var View = Vue.component('main-view', {
             ajax.addEventListener("loadend", function(data) {
                 var json = JSON.parse(this.responseText);
                 self.image = json;
-                self.tags = [];
-                json.tags.forEach(function(tagName) {
-                    var ajax = new XMLHttpRequest();
-                    ajax.open('GET', "/api/tag/" + tagName);
-                    ajax.addEventListener('loadend', function(data) {
-                        var json = JSON.parse(this.responseText);
-                        self.tags.push(json);
-                        self.tags = self.tags.sort(function(a, b) {
-                            var nameA = a.name.toUpperCase();
-                            var nameB = b.name.toUpperCase();
-                            if (nameA < nameB)return -1;
-                            if (nameA > nameB)return 1;
-                            return 0;
-                        });
-                    });
-                    ajax.send();
+                self.tags = json.tags.sort(function(a, b) {
+                    var nameA = a.name.toUpperCase();
+                    var nameB = b.name.toUpperCase();
+                    if (nameA < nameB)return -1;
+                    if (nameA > nameB)return 1;
+                    return 0;
                 });
             });
             ajax.send();
@@ -66,6 +56,31 @@ var View = Vue.component('main-view', {
                 });
                 ajax.send();
             }
+        },
+        editRating: function(value) {
+            if(confirm("Set the rating to '" + value + "' ?"))
+                this.setImageValue("rating", value);
+        },
+        editUser: function(value) {
+            if(confirm("Set the uploader to '" + value + "' ?"))
+                this.setImageValue("user", value);
+        },
+        editSource: function(value) {
+            if(confirm("Set the source to '" + value + "' ?"))
+                this.setImageValue("source", value);
+        },
+        setImageValue: function(name, value) {
+            var self = this;
+            var ajax = new XMLHttpRequest();
+            ajax.open('POST', "/api/image/" + this.id);
+            ajax.setRequestHeader("Content-Type", "application/json");
+            ajax.addEventListener('loadend', function(data) {
+                self.selectImage();
+            });
+            var data = {};
+            data[name] = value;
+            console.log(data);
+            ajax.send(JSON.stringify(data));
         }
     },
     created: function(to, from) {

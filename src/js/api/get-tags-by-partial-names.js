@@ -27,12 +27,22 @@ module.exports = function(req, res) {
         }
         const str1 = firsts.join(" ");
         const str = str1 ? str1 + " " : "";
-        res.send(results.map(r => ({
-            result: str + r.name,
-            query: queried,
-            name: r.name,
-            match: true,
-            count: r.count || 0,
-        })));
+        Promise.all(results
+            .map(tag => {
+                return new Promise(function(resolve, reject) {
+                    database.getCountByTagList(tag.name, (count) => {
+                        resolve({name: tag.name, count: count});
+                    });
+                });
+            })
+        ).then((tags) => {
+            res.send(tags.map(r => ({
+                result: str + r.name,
+                query: queried,
+                name: r.name,
+                match: true,
+                count: r.count || 0,
+            })));
+        });
     });
 }
