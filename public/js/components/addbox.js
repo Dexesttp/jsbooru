@@ -9,6 +9,19 @@ Vue.component("add-box", {
         current: String,
     },
     methods: {
+        processData: function(data) {
+            var original = data[0].query.split(" ").pop();
+            if(data[0].match && data.every(d => d.name !== original)) {
+                data.push({
+                    count: 0,
+                    match: false,
+                    name: original,
+                    query: data[0].query,
+                    result: original
+                })
+            }
+            return data;
+        },
         formatData: function(data) {
             if(data.match) {
                 return (
@@ -18,10 +31,10 @@ Vue.component("add-box", {
                 </div>`);
             }
             return (
-            `<div class="reply">
-                <span class="title">${data.query}</span>
-                <span class="count">create</span>
-            </div>`);
+                `<div class="reply">
+                    <span class="title">${data.query}</span>
+                    <span class="count">create</span>
+                </div>`);
         },
         getData: function(tag) {
             this.$emit("select", tag.result);
