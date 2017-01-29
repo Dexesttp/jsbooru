@@ -31,13 +31,17 @@ exports.updateTag = function(tagName, tagData) {
 exports.insertPicture = function(pictureData, callback) {
     exports.images.insert(pictureData, function(err, result) {
         if(err) console.log(err);
-        callback(result._id);
+        callback(result[0]._id);
     });
+}
+
+exports.deletePicture = function(pictureID) {
+    exports.images.remove({ _id: pictureID });
 }
 
 exports.getTags = function(tagName, callback) {
     exports.tags.find(
-        {name: { $regex: new RegExp(`^${tagName}`) } }
+        {name: { $regex: new RegExp(`^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`) } }
     ).toArray(function(err, result) {
         if(err) console.log(err);
         callback(result);
@@ -88,7 +92,10 @@ exports.getPicturesByTag = function(tagNames, skip, limit, callback) {
             limit: limit,
         }
     ).toArray(function(err, result) {
-        if(err) throw new Error(`Could not retrieve the images for the tag ${tagName}`);
+        if(err) {
+            console.log(err);
+            throw new Error(`Could not retrieve the images for the tags ${tagNames}`);
+        }
         callback(result);
     });
 }

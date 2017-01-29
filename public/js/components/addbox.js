@@ -10,10 +10,17 @@ Vue.component("add-box", {
     },
     methods: {
         formatData: function(data) {
+            if(data.match) {
+                return (
+                `<div class="reply">
+                    <span class="title">${data.name}</span>
+                    <span class="count">(${data.count})</span>
+                </div>`);
+            }
             return (
             `<div class="reply">
-                <span class="title">${data.name}</span>
-                <span class="count">(${data.count})</span>
+                <span class="title">${data.query}</span>
+                <span class="count">create</span>
             </div>`);
         },
         getData: function(tag) {

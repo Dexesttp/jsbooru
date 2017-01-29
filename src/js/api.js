@@ -12,7 +12,9 @@ exports.init = function(app) {
         if(queried === "") {
             res.send([{
                 result: request.join(" "),
+                query: queried,
                 name: request.join(" "),
+                match: true,
                 count: 0,
             }]);
             return;
@@ -21,7 +23,9 @@ exports.init = function(app) {
             if(results.length === 0) {
                 res.send([{
                     result: request.join(" "),
+                    query: queried,
                     name: "(no match)",
+                    match: false,
                     count: 0,
                 }]);
                 return;
@@ -30,7 +34,9 @@ exports.init = function(app) {
             const str = str1 ? str1 + " " : "";
             res.send(results.map(r => ({
                 result: str + r.name,
+                query: queried,
                 name: r.name,
+                match: true,
                 count: r.count || 0,
             })));
         });
@@ -96,7 +102,7 @@ exports.init = function(app) {
             const extension = path.extname(filename);
             const newFile = urlID + extension;
             const newFileAbsolute = path.resolve(config.imageFolder, newFile);
-            console.log(newFileAbsolute);
+            console.log(`Added file : ${newFileAbsolute}`);
             fstream = fs.createWriteStream(newFileAbsolute);
             file.pipe(fstream);
             fstream.on('close', function() {
@@ -104,11 +110,18 @@ exports.init = function(app) {
                     url: '/img/' + newFile,
                     tags: [],
                 }, function(id) {
-                    res.redirect(`/view/${id}`);
+                    console.log(`Assigned ID : ${id}`);
+                    res.redirect(`/#/view/${id}`);
                 });
             });
         })
         return;
+    });
+
+    app.delete("/api/image/:id", function(req, res) {
+        const imageID = req.params.id;
+        database.deletePicture(imageID);
+        res.sendStatus(200);
     });
 
     app.delete("/api/image/:id/:tagname", function(req, res) {
