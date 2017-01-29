@@ -1,0 +1,40 @@
+/* Base */
+body {
+	color: #EEE;
+	background-color: #333;
+}
+
+/* Main menu */
+menu.main li {
+	background-color: #555;
+}
+menu.main a,
+menu.main a:visited,
+menu.main a:link {
+	color: #CCF;
+	text-decoration: none;
+}
+menu.main a:hover {
+	color: #AAD;
+	text-decoration: underline;
+}
+
+/* Tags */
+#tags a { color: lightblue; text-decoration: none; }
+#tags a:hover { text-decoration: underline; }
+#tags .wiki { margin-right: 10px; }
+#tags .name { margin-right: 5px; }
+#tags .post-count { color: #999; }
+
+/* Page selection */
+.pages li {
+	border: 1px solid black;
+	background-color: #555;
+	color: #EEE;
+}
+
+.pages li.selected {
+	border: 1px solid white;
+	background-color: #EEE;
+	color: #555;
+}

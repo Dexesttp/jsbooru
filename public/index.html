@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSBooru</title>
+	<link rel="stylesheet" href="/css/vue2-autocomplete.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+	<div id="app">
+		<header id="header">
+			<h1>{{title}}</h1>
+			<nav>
+				<menu class="main">
+					<ul>
+						<li><router-link to="/search">Posts</a></li>
+						<li><router-link to="/upload">Upload</a></li>
+					</ul>
+				</menu>
+			</nav>
+		</header>
+		<router-view></router-view>
+		<footer id="footer">
+			<div>
+				Powered by <a href="//github.com/dexesttp/jsbooru">JSBooru</a>
+			</div>
+		</footer>
+	</div>
+</body>
+
+<!-- Components -->
+	<script type="text/x-template" id="editable-text-template">
+		<div class="editable-text">{{title}}
+			<input type="text" v-if="isEdited && !allowedEntries" v-model="currentValue" @keyup.enter="endEdit" />
+			<select v-if="isEdited && allowedEntries" v-model="currentValue">
+				<option v-for="entry in allowedEntries">{{entry}}</option>
+			</select>
+			<a v-if="value && !isEdited" :href="url">{{value}}</a>
+			<a v-if="!value && !isEdited">{{unknown}}</a>
+			<a class="edit" v-if="canEdit && !isEdited" @click="startEdit">(edit)</a>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="thumbnail-template">
+		<article
+				class="post-preview"
+				itemscope
+				itemtype="http://schema.org/ImageObject"
+				v-bind:id="'post_' + image.id"
+				v-bind:data-id="image.id">
+			<a @click="selectImage()">
+				<img
+						itemprop="thumbnailUrl"
+							:src="image.thumbnail"
+							:alt="image.tags"
+							:title="image.tags" />
+			</a>
+		</article>
+	</script>
+
+	<script type="text/x-template" id="pagebox-template">
+		<nav class="pages">
+			<ul>
+				<li v-for="page in pages" :class="{ selected: page.selected }" @click="selectPage(page)">{{page.identifier}}</li>
+			</ul>
+		</nav>
+	</script>
+
+<!-- Sidebar-->
+	<script type="text/x-template" id="searchbox-template">
+		<section id="searchbox">
+			<h2>Search</h2>
+			<autocomplete
+					url="/api/tags"
+					params="q"
+					anchor="result"
+					:min="1"
+					:debounce="250"
+					:template="formatData"
+					:initValue="current"
+					:on-select="getData">
+			</autocomplete>
+		</section>
+	</script>
+
+	<script type="text/x-template" id="sidebar-tags-template">
+		<section id="tags">
+			<h2>Tags</h2>
+			<ul>
+				<li v-for="tag in tags">
+					<a class="wiki" v-bind:href="tag.wiki">?</a>
+					<a class="name" @click="searchTag(tag.name)">{{tag.name}}</a>
+					<span class="post-count">{{tag.count}}</span>
+					<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
+				</li>
+			</ul>
+		</section>
+	</script>
+
+	<script type="text/x-template" id="addbox-template">
+		<section id="addbox">
+			<h2>Add tag</h2>
+			<autocomplete
+					url="/api/tags"
+					params="q"
+					anchor="result"
+					:min="1"
+					:debounce="250"
+					:template="formatData"
+					:on-select="getData">
+			</autocomplete>
+		</section>
+	</script>
+
+	<script type="text/x-template" id="image-data-template">
+		<section id="infos">
+			<h2>Infos</h2>
+			<editable-text unknown="none"
+					title="Rating: " :value="image.rating"
+					:canEdit="true" @edit="editRating"
+					:allowedEntries="['safe', 'questionnable', 'explicit']" />
+			<editable-text unknown="UNKNOWN"
+					title="Source: " :value="image.source" :url="image.source"
+					:canEdit="true" @edit="editSource"/>
+			<editable-text unknown="UNKNOWN"
+					title="Uploader: " :value="image.user" :url="'/user/' + image.user"
+					:canEdit="true" @edit="editUser"/>
+			</div>
+		</section>
+	</script>
+
+<!-- Views -->
+	<script type="text/x-template" id="view-template">
+		<div id="content">
+			<section id="image">
+				<img v-if="image" v-bind:src="image.url" />
+			</section>
+			<aside>
+				<search-box @select="setRequest"></search-box>
+				<sidebar-tags @select="setRequest" @delete="deleteTag" :tags="tags" :allowDelete="true"></sidebar-tags>
+				<add-box @select="addTag"></add-box>
+				<image-data v-if="image" :image="image"
+						@editRating="editRating"
+						@editUser="editUser"
+						@editSource="editSource">
+				</image-data>
+			</aside>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="search-template">
+		<div id="content">
+			<section id="search">
+				<h2>{{count}} results</h2>
+				<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
+				<image-thumbnail @select="selectImage" v-for="image in images" :image="image" />
+				<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
+			</section>
+			<aside>
+				<search-box @select="setRequest" :current="currTags"></search-box>
+				<sidebar-tags @select="addTag" :tags="tags"></sidebar-tags>
+			</aside>
+		</div>
+	</script>
+
+	<script type="text/x-template" id="upload-template">
+		<div id="content">
+			<section id="upload">
+				<form action="/api/image" method="post" enctype="multipart/form-data">
+					<input type="file" name="image" />
+					<input type="submit" value="upload" />
+				</form>
+			</section>
+			<aside>
+				Uploading picture...
+			</aside>
+		</div>
+	</script>
+
+<script src="/lib/vue.js"></script>
+<script src="/lib/vue-router.js"></script>
+<script src="/lib/vue2-autocomplete.js"></script>
+
+<script src="/js/components/addbox.js"></script>
+<script src="/js/components/editable-text.js"></script>
+<script src="/js/components/image-data.js"></script>
+<script src="/js/components/pagebox.js"></script>
+<script src="/js/components/searchbox.js"></script>
+<script src="/js/components/sidebar-tags.js"></script>
+<script src="/js/components/thumbnail.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/upload.js"></script>
+<script src="/js/view.js"></script>
+<script src="/js/index.js"></script>
+</html>

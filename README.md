@@ -14,12 +14,12 @@ This project was originally made for a raspberry based Booru board.
 
 Here is a list of feature we would want to integrate to JSBooru - starting from the most obvious ones to the most advanced !
 
-- [ ] Upload pictures, picture info (such as source)
-- [ ] Add tags to pictures
-- [ ] Search by tags
+- [X] Upload pictures, picture info (such as source)
+- [X] Add tags to pictures
+- [X] Search by tags
 - [ ] Tag categories
-- [ ] Score/favourites sytem and related searches
 - [ ] User login and options (exclude tags, disable comments, ...)
+- [ ] Score/favourites sytem and related searches
 - [ ] Comment system
 - [ ] Notes/translations system
 - [ ] Wiki & Tag definitions
@@ -41,15 +41,16 @@ No releases are currently available. Check back later !
 
 ## Configuration
 
-For now, the project isn't even out of alpha so there's no configuration options available.
+Server-wide configuration is available using the `config.json` file at the root.
+An example file is given as `config.default.json`
 
 The end goal is to have server-wide conigurations such as :
 
+- [X] Where the files are stored.
 - [ ] The need for user login to do some actions (post pictures, add tags, add notes, write comments).
-- [ ] Where the files are stored.
 - [ ] Whether to self-host or remote-host the files with things like imgur.
 - [ ] Default user/admin options, so you don't have to login on your own server.
-- [ ] API management (on/off, manage tokens, limit features, throttle...)
+- [ ] API management (on/off features, manage tokens, throttle...)
 
 In addition, user configs such as :
 
@@ -61,17 +62,24 @@ As well as administrative features :
 
 - [ ] Image management (delete pictures)
 - [ ] User management (promotion, ban)
-- [ ] Promotion levels
+- [ ] Promotion levels (e.g. community moderator, moderator, administrator)
+
+will be added via config pages.
 
 ### Adding themes
 
-Themes are not implemented yet. Check back later !
+For now, themes are available under `/public/css/theme.css`.
+
+The only way to edit the theme is to edit the file, and there is no current way to switch themes. Such options will be added at a further date.
 
 ## Getting started - developping
 
 ### General informations
 
-The project will be built using es7. All transpiling is done automatically, so don't worry about it too much.
+THis project has the challenge of being able to run only on Javascript code - the only exception being the Python component used in [BSON](https://github.com/mongodb/js-bson), which is required by TingoDB.
+
+The project is built solely using es3/5 for the front-end, and es6 features implemented in v8 for the backend.  
+The only requirements are NodeJS compatibility (NodeJS v6 is the target version) and VueJS compatibility.
 
 ### Librairies used
 
@@ -84,9 +92,13 @@ The goal is to use 100% Javascript/NodeJS librairies.
   - As such, there might be an already created MongoDB implementation hidden behind a server config down the line.
 - [Express](http://expressjs.com/)
   - ExpressJS is THE reference for NodeJS servers.
+  - It is agremented of several components to handle data:
+    - [body-parser](https://github.com/expressjs/body-parser) to handle JSON body contents
+    - [busboy](https://github.com/mscdex/busboy) to handle file contents, as well as [connect-busboy](https://github.com/mscdex/connect-busboy) for middleware.
 - [VueJS](http://vuejs.org/)
   - VueJS is one of the rising front-end presenters in the market.
-  - It is agremented of several complents for ease-of-use.
+  - It is agremented of several components for ease-of-use.
+    - [vue-router](https://router.vuejs.org/) adds page and hstory (back button) management to VueJS.
     - [vue2-autocomplete](https://github.com/BosNaufal/vue2-autocomplete) adds autocompletion for search results.
 
 This list is very likely to expand or evolve as the project grows.
