@@ -10,21 +10,21 @@ Vue.component("add-box", {
     },
     methods: {
         processData: function(data) {
-            var original = data[0].query.split(" ").pop();
-            if(data[0].match && data.every(function(d) { d.name !== original })) {
+            data.sort(function (d1, d2) {
+                if(d1.count > d2.count) return -1;
+                if(d1.count < d2.count) return 1;
+                return 0;
+            });
+            if(data[0].match) {
+                var original = data[0].query.split(" ").pop();
                 data.push({
                     count: 0,
                     match: false,
                     name: original,
                     query: data[0].query,
                     result: original
-                })
+                });
             }
-            data.sort(function (d1, d2) {
-                if(d1.count > d2.count) return -1;
-                if(d1.count < d2.count) return 1;
-                return 0;
-            })
             return data;
         },
         formatData: function(data) {
