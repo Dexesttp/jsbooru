@@ -61,7 +61,7 @@ exports.updatePicture = function(pictureID, pictureData) {
     exports.images.update({ id: pictureID }, { $set: pictureData });
 }
 
-exports.getTagImages = function(tagList, callback) {
+exports.getCountByTagList = function(tagList, callback) {
     exports.images.count(
         { tags: { $all: tagList } },
     function(err, count) {

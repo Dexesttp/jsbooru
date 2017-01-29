@@ -28,6 +28,13 @@ var View = Vue.component('main-view', {
                     ajax.addEventListener('loadend', function(data) {
                         var json = JSON.parse(this.responseText);
                         self.tags.push(json);
+                        self.tags = self.tags.sort(function(a, b) {
+                            var nameA = a.name.toUpperCase();
+                            var nameB = b.name.toUpperCase();
+                            if (nameA < nameB)return -1;
+                            if (nameA > nameB)return 1;
+                            return 0;
+                        });
                     });
                     ajax.send();
                 });
@@ -35,7 +42,7 @@ var View = Vue.component('main-view', {
             ajax.send();
         },
         setRequest: function(request) {
-            router.push('/search/' + request);
+            router.push('/search?q=' + request);
         },
         addTag: function(tags) {
             var self = this;

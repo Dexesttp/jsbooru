@@ -6,8 +6,6 @@ html {
 body {
 	margin: 0;
 	padding: 0;
-	color: #EEE;
-	background-color: #333;
 }
 
 /* Menu */
@@ -28,18 +26,7 @@ menu.main ul {
 
 menu.main li {
 	flex: 0 1 100px;
-	background-color: #555;
 	text-align: center;
-}
-menu.main a,
-menu.main a:visited,
-menu.main a:link {
-	color: #CCF;
-	text-decoration: none;
-}
-menu.main a:hover {
-	color: #AAD;
-	text-decoration: underline;
 }
 
 /* Content */
@@ -82,13 +69,11 @@ menu.main a:hover {
 }
 
 #tags li { margin: 0; }
-#tags a:link { color: lightblue; text-decoration: none; }
-#tags a:link:hover { text-decoration: underline; }
 #tags .wiki { margin-right: 10px; }
 #tags .name { margin-right: 5px; }
-#tags .post-count { color: #999; font-size: 0.8em; }
+#tags .post-count { font-size: 0.8em; }
 
-/* Content */
+/* Thumbnails */
 .post-preview {
 	margin: 0 10px 10px 0;
 	width: 154px;
@@ -107,8 +92,8 @@ menu.main a:hover {
 .post-preview > a > img {
 	margin: auto;
     vertical-align: middle;
-	max-width: 100%;
-	max-height: 100%;
+	max-width: 154px;
+	max-height: 154px;
 }
 
 /* Tag searchs */
@@ -123,6 +108,34 @@ menu.main a:hover {
 
 .reply > .count {
 	float: right;
+}
+
+#footer {
+	text-align: center;
+}
+
+/* page selection */
+.pages {
+	margin: 10px 0px;
+	width: 100%;
+}
+
+.pages > ul {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.pages li {
+	margin: 0;
+	padding: 0.1em 0;
+	min-width: 1.5em;
+	min-height: 1.25em;
+	text-align: center;
+	flex-wrap: nowrap;
 }
 
 #footer {

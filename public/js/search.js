@@ -5,26 +5,33 @@ var Search = Vue.component('main-search', {
     data: function() {
         return {
             currTags: "",
+            pos: 0,
+            count: 0,
             images: [],
             tags: [],
             loaded: false,
         };
     },
+    computed: {
+
+    },
     methods: {
         init: function() {
-            this.currTags = this.$route.params.tags || "";
+            this.currTags = this.$route.query.q || "";
+            this.pos = +(this.$route.query.s || "");
             this.getItems();
         },
         getItems: function() {
             var self = this;
             var ajax = new XMLHttpRequest();
             if(this.currTags)
-                ajax.open('GET', "/api/images?q=" + this.currTags);
+                ajax.open('GET', "/api/image?q=" + this.currTags + "&s=" + this.pos);
             else
-                ajax.open('GET', "/api/images");
+                ajax.open('GET', "/api/image?s=" + this.pos);
             ajax.addEventListener('loadend', function(data) {
                 var json = JSON.parse(this.responseText);
-                self.images = json.map(function(image) {
+                self.count = json.count;
+                self.images = json.result.map(function(image) {
                     return {
                         id: image._id,
                         link: `/view?id=${image._id}`,
@@ -33,7 +40,7 @@ var Search = Vue.component('main-search', {
                     };
                 });
                 self.tags = [];
-                json
+                json.result
                     .reduce(function(prev, image) {return prev.concat(image.tags || []);}, [])
                     .filter(function(i, idx, arr) {return arr.indexOf(i) === idx; })
                     .forEach(function(tagName) {
@@ -62,6 +69,9 @@ var Search = Vue.component('main-search', {
         selectImage: function(imageID) {
             router.push("/view/" + imageID);
         },
+        selectPage: function(start) {
+            router.push("/search?s=" + start + "&q=" + this.currTags);
+        },
         setRequest: function(request) {
             this.currTags = request.trim();
             this.goTo();
@@ -72,14 +82,17 @@ var Search = Vue.component('main-search', {
             this.goTo();
         },
         goTo: function() {
-            router.push("/search/" + this.currTags);
+            router.push("/search?q=" + this.currTags);
         }
     },
     created: function(to, from) {
         this.init();
     },
     watch: {
-        '$route.params.tags': function(to, from) {
+        '$route.query.q': function(to, from) {
+            if(to !== from) this.init();
+        },
+        '$route.query.s': function(to, from) {
             if(to !== from) this.init();
         }
     }

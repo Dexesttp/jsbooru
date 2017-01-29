@@ -4,6 +4,7 @@
 	<title>JSBooru</title>
 	<link rel="stylesheet" href="/css/vue2-autocomplete.css">
 	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
 	<div id="app">
@@ -27,82 +28,93 @@
 	</div>
 </body>
 
-<script type="text/x-template" id="searchbox-template">
-	<section id="searchbox">
-		<h2>Search</h2>
-		<autocomplete
-				url="/api/tags"
-				params="q"
-				anchor="result"
-				:min="1"
-				:debounce="250"
-				:template="formatData"
-				:initValue="current"
-				:on-select="getData">
-		</autocomplete>
-	</section>
-</script>
+<!-- Sidebar-->
+	<script type="text/x-template" id="searchbox-template">
+		<section id="searchbox">
+			<h2>Search</h2>
+			<autocomplete
+					url="/api/tags"
+					params="q"
+					anchor="result"
+					:min="1"
+					:debounce="250"
+					:template="formatData"
+					:initValue="current"
+					:on-select="getData">
+			</autocomplete>
+		</section>
+	</script>
 
-<script type="text/x-template" id="addbox-template">
-	<section id="addbox">
-		<h2>Add tag</h2>
-		<autocomplete
-				url="/api/tags"
-				params="q"
-				anchor="result"
-				:min="1"
-				:debounce="250"
-				:template="formatData"
-				:on-select="getData">
-		</autocomplete>
-	</section>
-</script>
+	<script type="text/x-template" id="sidebar-tags-template">
+		<section id="tags">
+			<h2>Tags</h2>
+			<ul>
+				<li v-for="tag in tags">
+					<a class="wiki" v-bind:href="tag.wiki">?</a>
+					<a class="name" @click="searchTag(tag.name)">{{tag.name}}</a>
+					<span class="post-count">{{tag.count}}</span>
+					<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
+				</li>
+			</ul>
+		</section>
+	</script>
 
-<script type="text/x-template" id="sidebar-tags-template">
-	<section id="tags">
-		<h2>Tags</h2>
-		<ul>
-			<li v-for="tag in tags">
-				<a class="wiki" v-bind:href="tag.wiki">?</a>
-				<a class="name" @click="searchTag(tag.name)">{{tag.name}}</a>
-				<span class="post-count">{{tag.count}}</span>
-				<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
-			</li>
-		</ul>
-	</section>
-</script>
+	<script type="text/x-template" id="addbox-template">
+		<section id="addbox">
+			<h2>Add tag</h2>
+			<autocomplete
+					url="/api/tags"
+					params="q"
+					anchor="result"
+					:min="1"
+					:debounce="250"
+					:template="formatData"
+					:on-select="getData">
+			</autocomplete>
+		</section>
+	</script>
 
-<script type="text/x-template" id="image-data-template">
-	<section id="infos">
-		<h2>Infos</h2>
-		<div>Source:
-			<a v-if="image.source" :href="image.source">{{image.source}}</a>
-			<a v-if="!image.source">No source</a>
-		</div>
-		<div>Uploader:
-			<a v-if="image.user" :href="'/user/' + image.user.id">{{image.user.name}}</a>
-			<a v-if="!image.user">UNKNOWN</a>
-		</div>
-	</section>
-</script>
+	<script type="text/x-template" id="image-data-template">
+		<section id="infos">
+			<h2>Infos</h2>
+			<div>Source:
+				<a v-if="image.source" :href="image.source">{{image.source}}</a>
+				<a v-if="!image.source">No source</a>
+			</div>
+			<div>Uploader:
+				<a v-if="image.user" :href="'/user/' + image.user.id">{{image.user.name}}</a>
+				<a v-if="!image.user">UNKNOWN</a>
+			</div>
+		</section>
+	</script>
 
-<script type="text/x-template" id="thumbnail-template">
-	<article
-			class="post-preview"
-			itemscope
-			itemtype="http://schema.org/ImageObject"
-			v-bind:id="'post_' + image.id"
-			v-bind:data-id="image.id">
-		<a @click="selectImage()">
-			<img
-					itemprop="thumbnailUrl"
-						:src="image.thumbnail"
-						:alt="image.tags"
-						:title="image.tags" />
-		</a>
-	</article>
-</script>
+<!-- Components -->
+	<script type="text/x-template" id="thumbnail-template">
+		<article
+				class="post-preview"
+				itemscope
+				itemtype="http://schema.org/ImageObject"
+				v-bind:id="'post_' + image.id"
+				v-bind:data-id="image.id">
+			<a @click="selectImage()">
+				<img
+						itemprop="thumbnailUrl"
+							:src="image.thumbnail"
+							:alt="image.tags"
+							:title="image.tags" />
+			</a>
+		</article>
+	</script>
 
+	<script type="text/x-template" id="pagebox-template">
+		<nav class="pages">
+			<ul>
+				<li v-for="page in pages" :class="{ selected: page.selected }" @click="selectPage(page)">{{page.identifier}}</li>
+			</ul>
+		</nav>
+	</script>
+
+<!-- Views -->
 <script type="text/x-template" id="view-template">
 	<div id="content">
 		<section id="image">
@@ -120,7 +132,10 @@
 <script type="text/x-template" id="search-template">
 	<div id="content">
 		<section id="search">
+			<h2>{{count}} results</h2>
+			<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
 			<image-thumbnail @select="selectImage" v-for="image in images" :image="image" />
+			<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
 		</section>
 		<aside>
 			<search-box @select="setRequest" :current="currTags"></search-box>
@@ -149,6 +164,7 @@
 
 <script src="/js/components/addbox.js"></script>
 <script src="/js/components/image-data.js"></script>
+<script src="/js/components/pagebox.js"></script>
 <script src="/js/components/searchbox.js"></script>
 <script src="/js/components/sidebar-tags.js"></script>
 <script src="/js/components/thumbnail.js"></script>
