@@ -15,8 +15,8 @@ This project was originally made for a raspberry based Booru board.
 Here is a list of feature we would want to integrate to JSBooru - starting from the most obvious ones to the most advanced !
 
 - [ ] Upload pictures, picture info (such as source)
-- [ ] Add tags to pictures
-- [ ] Search by tags
+- [X] Add tags to pictures
+- [X] Search by tags
 - [ ] Tag categories
 - [ ] Score/favourites sytem and related searches
 - [ ] User login and options (exclude tags, disable comments, ...)

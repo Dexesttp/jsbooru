@@ -2,17 +2,24 @@
   "name": "jsbooru",
   "version": "0.1.0",
   "description": "A Danbooru-style board made entirely in Jfor NodeJS",
-  "main": "index.js",
+  "main": "src/js/server.js",
   "scripts": {
+    "start": "node src/js/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "DexesTTP",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.16.0",
+    "busboy": "^0.2.14",
+    "connect-busboy": "0.0.2",
     "express": "^4.14.0",
     "tingodb": "^0.5.1"
   },
   "repository": {
     "url": "https://github.com/Dexesttp/jsbooru.git"
+  },
+  "devDependencies": {
+    "eslint": "^3.14.1"
   }
 }

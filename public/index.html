@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSBooru</title>
+	<link rel="stylesheet" href="/css/vue2-autocomplete.css">
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	<div id="app">
+		<header id="header">
+			<h1>{{title}}</h1>
+			<nav>
+				<menu class="main">
+					<ul>
+						<li><router-link to="/search">Posts</a></li>
+						<li><router-link to="/upload">Upload</a></li>
+					</ul>
+				</menu>
+			</nav>
+		</header>
+		<router-view></router-view>
+		<footer id="footer">
+			<div>
+				Powered by <a href="//github.com/dexesttp/jsbooru">JSBooru</a>
+			</div>
+		</footer>
+	</div>
+</body>
+
+<script type="text/x-template" id="searchbox-template">
+	<section id="searchbox">
+		<h2>Search</h2>
+		<autocomplete
+				url="/api/tags"
+				params="q"
+				anchor="result"
+				:min="1"
+				:debounce="250"
+				:template="formatData"
+				:initValue="current"
+				:on-select="getData">
+		</autocomplete>
+	</section>
+</script>
+
+<script type="text/x-template" id="addbox-template">
+	<section id="addbox">
+		<h2>Add tag</h2>
+		<autocomplete
+				url="/api/tags"
+				params="q"
+				anchor="result"
+				:min="1"
+				:debounce="250"
+				:template="formatData"
+				:on-select="getData">
+		</autocomplete>
+	</section>
+</script>
+
+<script type="text/x-template" id="sidebar-tags-template">
+	<section id="tags">
+		<h2>Tags</h2>
+		<ul>
+			<li v-for="tag in tags">
+				<a class="wiki" v-bind:href="tag.wiki">?</a>
+				<a class="name" @click="searchTag(tag.name)">{{tag.name}}</a>
+				<span class="post-count">{{tag.count}}</span>
+				<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
+			</li>
+		</ul>
+	</section>
+</script>
+
+<script type="text/x-template" id="image-data-template">
+	<section id="infos">
+		<h2>Infos</h2>
+		<div>Source:
+			<a v-if="image.source" :href="image.source">{{image.source}}</a>
+			<a v-if="!image.source">No source</a>
+		</div>
+		<div>Uploader:
+			<a v-if="image.user" :href="'/user/' + image.user.id">{{image.user.name}}</a>
+			<a v-if="!image.user">UNKNOWN</a>
+		</div>
+	</section>
+</script>
+
+<script type="text/x-template" id="thumbnail-template">
+	<article
+			class="post-preview"
+			itemscope
+			itemtype="http://schema.org/ImageObject"
+			v-bind:id="'post_' + image.id"
+			v-bind:data-id="image.id">
+		<a @click="selectImage()">
+			<img
+					itemprop="thumbnailUrl"
+						:src="image.thumbnail"
+						:alt="image.tags"
+						:title="image.tags" />
+		</a>
+	</article>
+</script>
+
+<script type="text/x-template" id="view-template">
+	<div id="content">
+		<section id="image">
+			<img v-if="image" v-bind:src="image.url" />
+		</section>
+		<aside>
+			<search-box @select="setRequest"></search-box>
+			<sidebar-tags @select="setRequest" @delete="deleteTag" :tags="tags" :allowDelete="true"></sidebar-tags>
+			<add-box @select="addTag"></add-box>
+			<image-data v-if="image" :image="image"></image-data>
+		</aside>
+	</div>
+</script>
+
+<script type="text/x-template" id="search-template">
+	<div id="content">
+		<section id="search">
+			<image-thumbnail @select="selectImage" v-for="image in images" :image="image" />
+		</section>
+		<aside>
+			<search-box @select="setRequest" :current="currTags"></search-box>
+			<sidebar-tags @select="addTag" :tags="tags"></sidebar-tags>
+		</aside>
+	</div>
+</script>
+
+<script type="text/x-template" id="upload-template">
+	<div id="content">
+		<section id="upload">
+			<form action="/api/image" method="post" enctype="multipart/form-data">
+				<input type="file" name="image" />
+				<input type="submit" value="upload" />
+			</form>
+		</section>
+		<aside>
+			Uploading picture...
+		</aside>
+	</div>
+</script>
+
+<script src="/lib/vue.js"></script>
+<script src="/lib/vue-router.js"></script>
+<script src="/lib/vue2-autocomplete.js"></script>
+
+<script src="/js/components/addbox.js"></script>
+<script src="/js/components/image-data.js"></script>
+<script src="/js/components/searchbox.js"></script>
+<script src="/js/components/sidebar-tags.js"></script>
+<script src="/js/components/thumbnail.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/upload.js"></script>
+<script src="/js/view.js"></script>
+<script src="/js/index.js"></script>
+</html>
