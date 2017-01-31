@@ -13,7 +13,8 @@
   "dependencies": {
     "busboy": "^0.2.14",
     "connect-busboy": "0.0.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "jimp": "^0.2.27"
   },
   "repository": {
     "url": "https://github.com/Dexesttp/jsbooru.git"

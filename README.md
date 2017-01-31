@@ -109,6 +109,9 @@ To start the server with the default configuration.
 
 The goal is to use 100% Javascript/NodeJS librairies.
 
+- [Jimp](https://github.com/oliver-moran/jimp)
+  - Image manipulation in Javascript.
+  - Sadly, it doesn't handle all the file formats we would allow, but it certainly does the job for png, jpg and bmp files.
 - [Express](http://expressjs.com/)
   - ExpressJS is THE reference for NodeJS servers.
   - It is agremented of several components to handle data:

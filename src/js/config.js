@@ -6,6 +6,7 @@ const config = {
     imageFolder: "",
     staticFolder: "",
     host: "localhost",
+    thumbnailFolder: "",
     port: 8000,
 };
 
@@ -53,6 +54,11 @@ exports.initConfig = function (extConfig) {
         "../../",
         extConfig.staticFolder || "public"
     );
+    config.thumbnailFolder = path.resolve(
+        __dirname,
+        "../../",
+        extConfig.thumbnailFolder || "thumb"
+    );
     config.host = extConfig.host || "localhost";
     config.port = extConfig.port || 3000;
     // Check access permissions
@@ -71,6 +77,12 @@ exports.initConfig = function (extConfig) {
     if (!checkAccess(config.staticFolder)) {
         console.error(
             `The public folder ${config.database} can't be accessed. Ensure that the folder is created and that the user has enough permissions to access it.`
+        );
+        return false;
+    }
+    if (!checkAccess(config.thumbnailFolder)) {
+        console.error(
+            `The thumbnail folder ${config.thumbnailFolder} can't be accessed. Ensure that the folder is created and that the user has enough permissions to access it.`
         );
         return false;
     }

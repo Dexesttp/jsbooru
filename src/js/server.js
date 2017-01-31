@@ -20,6 +20,7 @@ const config = confHelper.config;
 database.init();
 
 app.use("/img", express.static(config.imageFolder));
+app.use("/thumb", express.static(config.thumbnailFolder));
 app.use("/api", require("./api"));
 routes.init(app);
 

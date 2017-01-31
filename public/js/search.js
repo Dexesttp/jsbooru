@@ -30,7 +30,7 @@ var Search = Vue.component("main-search", {
                         return {
                             id: image._id,
                             link: "/view/" + image._id,
-                            thumbnail: image.url,
+                            thumbnail: image.thumbnail || image.url,
                             tags: image.tags ? image.tags.join(" ") : "",
                         };
                     });
