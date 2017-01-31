@@ -5,6 +5,37 @@ const database = require("../database");
 const uuid = require("../utils").uuid;
 const thumb = require("../thumbnailer");
 
+function saveInDBAndRedirect(res, newFile, urlID, hash) {
+    if (hash) {
+        console.info(`Thumbnail hash : ${hash}`);
+    }
+    return database
+        .insertPicture(
+            hash
+                ? {
+                      url: "/img/" + newFile,
+                      thumbnail: "/thumb/" + urlID + ".jpg",
+                      hash: hash,
+                      tags: [],
+                  }
+                : {
+                      url: "/img/" + newFile,
+                      tags: [],
+                  }
+        )
+        .then((id) => {
+            console.info(`Assigned ID : ${id}`);
+            res.redirect(`/#/view/${id}`);
+        })
+        .catch((e) => {
+            console.error(
+                `Creating an ID for the new uploaded picture failed.`
+            );
+            console.error(e.message);
+            res.sendStatus(500);
+        });
+}
+
 module.exports = function (req, res) {
     req.pipe(req.busboy);
     req.busboy.on("file", function (fieldname, file, filename) {
@@ -16,24 +47,10 @@ module.exports = function (req, res) {
         file.pipe(fstream);
         fstream.on("close", function () {
             thumb
-                .createThumbnail(newFile)
-                .then((hash) =>
-                    database.insertPicture({
-                        url: "/img/" + newFile,
-                        thumbnail: "/thumb/" + urlID + ".jpg",
-                        tags: [],
-                    })
-                )
-                .then((id) => {
-                    console.log(`Assigned ID : ${id}`);
-                    res.redirect(`/#/view/${id}`);
-                })
+                .createThumbnail(newFileAbsolute)
+                .then((hash) => saveInDBAndRedirect(res, newFile, urlID, hash))
                 .catch((e) => {
-                    console.error(
-                        `Creating an ID for the new uploaded picture failed.`
-                    );
-                    console.error(e.message);
-                    res.sendStatus(500);
+                    saveInDBAndRedirect(res, newFile);
                 });
         });
     });
