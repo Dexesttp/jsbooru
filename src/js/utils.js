@@ -24,3 +24,16 @@ exports.uuid = function uuid() {
  * @return {string} a safe string
  */
 exports.encode = entities.encode;
+
+/**
+ * Transorms the given string into a regexpr that matches anything starting by the string.
+ * @param {string} data the string to encode
+ * @return {Promise<RegExp>} A promise on the encoded regexpr
+ */
+exports.toStartByRegex = function(data) {
+    if(!data.includes("/")) {
+        const cleanData = data.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+        return Promise.resolve(new RegExp(`^${cleanData}`, "g"));
+    }
+    return Promise.reject(new Error("The input string can't contain a slash."));
+}

@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const config = require("./config").config;
 const uuid = require("./utils").uuid;
+const toStartByRegex = require("./utils").toStartByRegex;
 
 const collectionNames = {
     images: "pictures",
@@ -86,6 +87,25 @@ exports.insertPicture = function (pictureData) {
     });
 };
 
+// Pure select
+
+/**
+ * Get the list of pictures.
+ * @returns {Promise<any[]>} the picture list.
+ */
+ exports.getPictures = function() {
+    return new Promise((resolve, reject) => {
+        exports.images.find()
+        .toArray(function(err, result) {
+            if(err) { reject(err); return; }
+            resolve(result);
+        });
+    });
+}
+
+// Pure update
+
+
 exports.deletePicture = function (pictureID) {
     let image_index = exports.images.findIndex(function (i) {
         return i._id === pictureID;
@@ -117,6 +137,23 @@ exports.getTagDataByName = function (tagName) {
         resolve(result);
     });
 };
+
+/**
+ * Get the tags that begins by the given string.
+ * @return {Promise<any[]>} the promise of the matches.
+ */
+exports.getTagsFromPartialTagName = function(tagName) {
+    return toStartByRegex(tagName)
+    .then((expr) =>
+    new Promise((resolve, reject) => {
+        exports.tags.find(
+            {name: { $regex: expr } }
+        ).toArray(function(err, result) {
+            if(err) { reject(err); return; }
+            resolve(result);
+        });
+    }));
+}
 
 exports.setTag = function (pictureID, tagName) {
     let image_index = exports.images.findIndex(function (i) {

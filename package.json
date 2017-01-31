@@ -15,7 +15,8 @@
     "connect-busboy": "0.0.2",
     "express": "^4.14.0",
     "html-entities": "^1.2.0",
-    "jimp": "^0.2.27"
+    "jimp": "^0.2.27",
+    "mz": "^2.6.0"
   },
   "repository": {
     "url": "https://github.com/Dexesttp/jsbooru.git"
