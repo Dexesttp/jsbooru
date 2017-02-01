@@ -91,8 +91,12 @@
     	<h2>Tags</h2>
     	<ul>
     		<li v-for="tag in tags">
-    			<a :class="['wiki', 'tag', tag.type]" :href="tag.wiki">?</a>
-    			<a :class="['name', 'tag', tag.type]" @click="searchTag(tag.name)">{{tag.name}}</a>
+    			<router-link :class="['wiki', 'tag', tag.type]"  :to="'/wiki/' + tag.name">
+    				?
+    			</router-link>
+    			<router-link :class="['name', 'tag', tag.type]"  :to="'/search?q=' + tag.name">
+    				{{tag.name}}
+    			</router-link>
     			<span :class="['post-count', 'tag', tag.type]">{{tag.count}}</span>
     			<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
     		</li>
@@ -154,6 +158,29 @@
     </div>
   </script>
 
+  <script type="text/x-template" id="wiki-template">
+    <div id="content">
+    	<section id="wiki">
+    		<h1 :class="['tag', type]">{{name}}</h1>
+    		<editable-text unknown="no-type"
+    				title="Tag type: " :value="type"
+    				:canEdit="true" @edit="editType"
+    				:allowedEntries="['no-type', 'author', 'character']" />
+
+    		<section v-for="wiki in entries">
+    			<h2>By {{wiki.author}}</h2><span>{{wiki.score}}</span>
+    			<p>{{wiki.entry}}</p>
+    		</section>
+    		<section v-if="!entries.length">
+    			<h2>No wiki entries</h2>
+    		</section>
+    	</section>
+    	<aside>
+    		<search-box @select="setRequest"></search-box>
+    	</aside>
+    </div>
+  </script>
+
   <script type="text/x-template" id="search-template">
     <div id="content">
     	<section id="search">
@@ -198,5 +225,6 @@
   <script src="/js/search.js"></script>
   <script src="/js/upload.js"></script>
   <script src="/js/view.js"></script>
+  <script src="/js/wiki.js"></script>
   <script src="/js/index.js"></script>
 </html>

@@ -8,12 +8,14 @@ const collectionNames = {
     images: "pictures",
     tags: "tags",
     tagcounts: "tag_counts",
+    tagwiki: "tag_wiki",
 };
 
 /**
- * @typedef {{ _id: string, url: string, tags: string[] }} ImageData
- * @typedef {{ _id: string, name: string, type: string }} TagData
+ * @typedef {{ _id: string, url: string, thumbnail: string, tags: string[] }} ImageData
+ * @typedef {{ _id: string, name: string, type?: string }} TagData
  * @typedef {{ name: string, count: number }} TagCountData
+ * @typedef {{ _id: string, name: string, wiki: string, author?: string, score: number }} TagWikiData
  */
 
 /** @type {ImageData[]} */
@@ -24,6 +26,9 @@ exports.tags = [];
 
 /** @type {TagCountData[]} */
 exports.tagcounts = [];
+
+/** @type {TagWikiData[]} */
+exports.tagwiki = [];
 
 function saveToMem() {
     const images_file_path = path.join(
@@ -50,6 +55,14 @@ function saveToMem() {
     if (fs.existsSync(tag_counts_file_path))
         fs.unlinkSync(tag_counts_file_path);
     fs.writeFileSync(tag_counts_file_path, tag_counts_data);
+
+    const tag_wiki_file_path = path.join(
+        config.database,
+        `${collectionNames.tagwiki}.json`
+    );
+    const tag_wiki_data = JSON.stringify(exports.tagwiki);
+    if (fs.existsSync(tag_wiki_file_path)) fs.unlinkSync(tag_wiki_file_path);
+    fs.writeFileSync(tag_wiki_file_path, tag_wiki_data);
 }
 
 exports.init = function () {
@@ -81,6 +94,16 @@ exports.init = function () {
         const tag_counts_file_contents = fs.readFileSync(tag_counts_file_path);
         const tagcounts = JSON.parse(tag_counts_file_contents);
         exports.tagcounts = tagcounts;
+    }
+
+    const tag_wiki_file_path = path.join(
+        config.database,
+        `${collectionNames.tagwiki}.json`
+    );
+    if (fs.existsSync(tag_wiki_file_path)) {
+        const tag_wiki_file_contents = fs.readFileSync(tag_wiki_file_path);
+        const tagwiki = JSON.parse(tag_wiki_file_contents);
+        exports.tagwiki = tagwiki;
     }
 
     saveToMem();
@@ -141,6 +164,26 @@ exports.insertPicture = function (pictureData) {
     });
 };
 
+/**
+ * Insert a new tag in the database.
+ * @param {string} tagName the tag name.
+ * @param {string} wiki the wiki entry.
+ * @return {Promise<any>} a promise of the result.
+ */
+exports.insertTagWiki = function (tagName, wiki) {
+    return new Promise((resolve, reject) => {
+        let new_uuid = uuid();
+        exports.tagwiki.push({
+            _id: new_uuid,
+            name: tagName,
+            wiki: wiki,
+            score: 0,
+        });
+        saveToMem();
+        resolve(result);
+    });
+};
+
 // Pure select
 
 /**
@@ -168,6 +211,24 @@ exports.getTagCount = function (tagName) {
     return new Promise((resolve, reject) => {
         const result = exports.tagcounts.find((t) => t.name === tagName);
         resolve(result ? result.count : 0);
+    });
+};
+
+/**
+ * Get the tag wiki data from a tag name.
+ * @param {string} tagName the name of the tag to retrieve the wiki data.
+ * @return {Promise<{ author: string, entry: string, score: number }[]>} a promise of the wiki data.
+ */
+exports.getTagWiki = function (tagName) {
+    return new Promise((resolve) => {
+        const entries = exports.tagwiki.filter((t) => t.name === tagName);
+        resolve(
+            entries.map((r) => ({
+                author: r.author,
+                entry: r.wiki,
+                score: r.score,
+            }))
+        );
     });
 };
 
@@ -208,24 +269,34 @@ exports.getTagDataByName = function (tagName) {
     });
 };
 
+/**
+ * Adds the given tag to the given picture
+ * @param {string} pictureID the ID of the picture to modify
+ * @param {string} tagName the name of the tag to insert
+ * @return {Promise<void>} resolves when the tag is inserted properly
+ */
 exports.setTag = function (pictureID, tagName) {
-    let image_index = exports.images.findIndex(function (i) {
-        return i._id === pictureID;
+    return new Promise((resolve, reject) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            reject();
+            return;
+        }
+
+        if (
+            !exports.tags.some(function (t) {
+                return t.name == tagName;
+            })
+        ) {
+            exports.insertTag(tagName);
+        }
+
+        exports.images[image_index].tags.push(tagName);
+        saveToMem();
+        resolve();
     });
-    if (image_index === -1) {
-        return;
-    }
-
-    if (
-        !exports.tags.some(function (t) {
-            return t.name == tagName;
-        })
-    ) {
-        exports.insertTag(tagName);
-    }
-
-    exports.images[image_index].tags.push(tagName);
-    saveToMem();
 };
 
 exports.deleteTag = function (pictureID, tagName) {

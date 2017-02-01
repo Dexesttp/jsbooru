@@ -56,6 +56,12 @@ menu.main a:hover {
 .tag.no-type {
   color: lightblue;
 }
+.tag.author {
+  color: purple;
+}
+.tag.character {
+  color: darkgreen;
+}
 
 /* Page selection */
 .pages li {
