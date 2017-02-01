@@ -33,7 +33,7 @@ exports.encode = entities.encode;
 exports.toStartByRegex = function(data) {
     if(!data.includes("/")) {
         const cleanData = data.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-        return Promise.resolve(new RegExp(`^${cleanData}`, "g"));
+        return Promise.resolve(new RegExp(`^${cleanData}`));
     }
     return Promise.reject(new Error("The input string can't contain a slash."));
 }

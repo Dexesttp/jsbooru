@@ -8,7 +8,7 @@ function getUniqueTags(unsafeQuery) {
         return arr.indexOf(i) === idx;
     });
     const unsafeTags = shouldSearchAll ? [] : unsafeTagsFromQuery;
-    return unsafeTags.map(tag => encode(tag));
+    return unsafeTags.map((tag) => encode(tag));
 }
 
 module.exports = function (req, res) {
@@ -26,7 +26,7 @@ module.exports = function (req, res) {
                         return database
                             .getTagDataByName(tagName)
                             .then((tagData) => {
-                                database
+                                return database
                                     .getCountByTagList(tagName)
                                     .then((count) => ({
                                         name: tagName,
