@@ -2,7 +2,7 @@
   "database": "database",
   "imageFolder": "images",
   "staticFolder": "public",
-	"thumbnailFolder": "thumb",
+  "thumbnailFolder": "thumb",
   "host": "localhost",
   "port": "3000"
 }

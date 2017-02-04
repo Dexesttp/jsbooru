@@ -5,7 +5,7 @@ module.exports = function (req, res) {
     const tagName = req.params.tagname;
     database
         .deleteTag(imageID, tagName)
-        .then((_) => database.updateTagCounts())
+        .then((_) => database.updateTagCount(tagName))
         .then((_) => {
             res.sendStatus(200);
         })

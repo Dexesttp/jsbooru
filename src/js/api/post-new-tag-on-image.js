@@ -4,8 +4,8 @@ module.exports = function (req, res) {
     const imageID = req.params.id;
     const tagName = req.params.tagname;
     database
-        .setTag(imageID, tagName)
-        .then((_) => database.updateTagCounts())
+        .insertTagOnPicture(imageID, tagName)
+        .then((_) => database.updateTagCount(tagName))
         .then((_) => {
             res.sendStatus(200);
         })

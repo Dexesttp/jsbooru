@@ -275,7 +275,7 @@ exports.getTagDataByName = function (tagName) {
  * @param {string} tagName the name of the tag to insert
  * @return {Promise<void>} resolves when the tag is inserted properly
  */
-exports.setTag = function (pictureID, tagName) {
+exports.insertTagOnPicture = function (pictureID, tagName) {
     return new Promise((resolve, reject) => {
         let image_index = exports.images.findIndex(function (i) {
             return i._id === pictureID;
@@ -373,6 +373,13 @@ exports.getPictureData = function (pictureID) {
     });
 };
 
+/**
+ * Get part of the picture list that matches the given tag.
+ * @param {string[]} tagList the tag names.
+ * @param {number} skip the number of items to skip.
+ * @param {number} limit the item limit.
+ * @returns {Promise<ImageData[]>} the promise of data.
+ */
 exports.getPicturesByTag = function (tagList, skip, limit) {
     return new Promise((resolve) => {
         let tagListArray = tagList;
@@ -392,14 +399,36 @@ exports.getPicturesByTag = function (tagList, skip, limit) {
 exports.updateTagCounts = function () {
     for (const tag of exports.tags) {
         const tagName = tag.name;
-        const imageCount = exports.images.filter((i) =>
-            i.tags.some((t) => t === tagName)
+        const imageCount = exports.images.filter(
+            (i) => i.tags.indexOf(tagName) !== -1
         ).length;
         const entry = exports.tagcounts.find((t) => t.name === tagName);
         if (entry) {
             entry.count = imageCount;
             continue;
         }
+        exports.tagcounts.push({
+            name: tagName,
+            count: imageCount,
+        });
+    }
+    saveToMem();
+    return Promise.resolve();
+};
+
+/**
+ * Update the tag count for the given tag.
+ * @param {string} tagName the tag name to count
+ * @returns {Promise<any>} the promise of the updated count.
+ */
+exports.updateTagCount = function (tagName) {
+    const imageCount = exports.images.filter(
+        (i) => i.tags.indexOf(tagName) !== -1
+    ).length;
+    const entry = exports.tagcounts.find((t) => t.name === tagName);
+    if (entry) {
+        entry.count = imageCount;
+    } else {
         exports.tagcounts.push({
             name: tagName,
             count: imageCount,

@@ -30,10 +30,13 @@ exports.encode = entities.encode;
  * @param {string} data the string to encode
  * @return {Promise<RegExp>} A promise on the encoded regexpr
  */
-exports.toStartByRegex = function(data) {
-    if(!data.includes("/")) {
-        const cleanData = data.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+exports.toStartByRegex = function (data) {
+    if (!data.includes("/")) {
+        const cleanData = data.replace(
+            /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+            "\\$&"
+        );
         return Promise.resolve(new RegExp(`^${cleanData}`));
     }
     return Promise.reject(new Error("The input string can't contain a slash."));
-}
+};
