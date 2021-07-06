@@ -61,6 +61,21 @@ menu.main li {
 	margin: 10px;
 }
 
+@media screen and (max-width: 580px) {
+	#content {
+		display: flex;
+		flex-direction: row-reverse;
+		flex-wrap: wrap-reverse;
+		justify-content: left;
+	}
+	#search,
+	#image,
+	#upload {
+		margin: 5vw 0 0 5vw ;
+		min-width: 90vw !important;
+	}
+}
+
 /* TAGS */
 #tags ul {
 	list-style: none;
