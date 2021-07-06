@@ -1,4 +1,3 @@
-const bodyParser = require("body-parser");
 const busboy = require("connect-busboy");
 const express = require("express");
 const fs = require('fs');
@@ -9,7 +8,7 @@ const routes = require("./routes");
 const database = require("./database");
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(busboy());
 
 if(!confHelper.initConfig()) {
