@@ -20,18 +20,19 @@ function checkAccess(file) {
 }
 
 exports.initConfig = function(extConfig) {
-    var fileConfig = {};
+    let fileConfig = {};
+    const configFilePath = path.resolve(__dirname, "../..", "config.json");
     try {
-        var configFilePath = path.resolve(__dirname, "../..", "config.json");
-        var configContents = fs.readFileSync(configFilePath, 'utf8');
-        console.log(`Found configuration file : ${configFilePath}`);
+        const configContents = fs.readFileSync(configFilePath, 'utf8');
+        console.info(`Found configuration file : ${configFilePath}`);
         try {
             fileConfig = JSON.parse(configContents);
         } catch(e) {
-            console.log(`Invalid data: ${configFilePath} does not contain a valid JSON string.`);
+            console.error(`Invalid data: ${configFilePath} does not contain a valid JSON string.`);
+            throw e;
         }
     } catch(e) {
-        console.log(`No configuraton file found : ${configFilePath}`);
+        console.info(`No valid configuration file found at ${configFilePath}. Using default configuration.`);
     }
     extConfig = extConfig || fileConfig;
     config.database = path.resolve(__dirname, "../../", extConfig.database || "database");

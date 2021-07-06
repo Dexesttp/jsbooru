@@ -79,7 +79,6 @@ var View = Vue.component('main-view', {
             });
             var data = {};
             data[name] = value;
-            console.log(data);
             ajax.send(JSON.stringify(data));
         }
     },

@@ -1,110 +1,154 @@
-const Engine = require("tingodb")();
+const path = require("path");
+const fs = require("fs");
 const config = require("./config").config;
+const uuid = require("./utils").uuid;
 
 const collectionNames = {
     images: "pictures",
     tags: "tags",
 }
 
+/** @type {[{ _id: string, url: string, tags: string[] }]} */
+exports.images = [];
+
+/** @type {[{ _id: string, name: string }]} */
+exports.tags = [];
+
+function saveToMem() {
+    const images_file_path = path.join(config.database, `${collectionNames.images}.json`);
+    const images_data = JSON.stringify(exports.images);
+    if (fs.existsSync(images_file_path))
+        fs.unlinkSync(images_file_path);
+    fs.writeFileSync(images_file_path, images_data);
+
+    const tags_file_path = path.join(config.database, `${collectionNames.tags}.json`);
+    const tags_data = JSON.stringify(exports.tags);
+    if (fs.existsSync(tags_file_path))
+        fs.unlinkSync(tags_file_path);
+    fs.writeFileSync(tags_file_path, tags_data);
+}
+
 exports.init = function() {
-    const db = new Engine.Db(config.database, {});
+    const images_file_path = path.join(config.database, `${collectionNames.images}.json`);
+    if (fs.existsSync(images_file_path)) {
+        const images_file_contents = fs.readFileSync(images_file_path);
+        const images = JSON.parse(images_file_contents);
+        exports.images = images;
+    }
 
-    db.createCollection(collectionNames.images, function(err, images) {
-        if(err) throw new Error("Could not initialize images database");
-        db.createCollection(collectionNames.tags, function(err, tags) {
-            if(err) throw new Error("Could not initialize tags database");
-            exports.images = images;
-            exports.tags = tags;
-        });
+    const tags_file_path = path.join(config.database, `${collectionNames.tags}.json`);
+    if (fs.existsSync(tags_file_path)) {
+        const tags_file_contents = fs.readFileSync(tags_file_path);
+        const tags = JSON.parse(tags_file_contents);
+        exports.tags = tags;
+    }
 
-    });
+    saveToMem();
 }
 
 exports.insertTag = function(tagName) {
-    exports.tags.insert({ name: tagName });
+    let new_uuid = uuid();
+    exports.tags.push(Object.assign({}, { name: tagName }, { _id: new_uuid }));
+    saveToMem();
 }
 
 exports.updateTag = function(tagName, tagData) {
-    exports.tags.update({ name: tagName }, { $set: tagData });
+    let tag_index = exports.tags.findIndex(function(tag) { return tag.name === tagName; });
+    if (tag_index === -1) {
+        return;
+    }
+    exports.tags[tag_index] = Object.assign({}, exports.tags[tag_index], tagData);
+    saveToMem();
 }
 
 exports.insertPicture = function(pictureData, callback) {
-    exports.images.insert(pictureData, function(err, result) {
-        if(err) console.log(err);
-        callback(result[0]._id);
-    });
+    let new_uuid = uuid();
+    exports.images.push(Object.assign({}, pictureData, { _id: new_uuid }));
+    saveToMem();
+    callback(new_uuid);
 }
 
 exports.deletePicture = function(pictureID) {
-    exports.images.remove({ _id: pictureID });
+    let image_index = exports.images.findIndex(function(i) { return i._id === pictureID; });
+    if (image_index === -1) {
+        return;
+    }
+    delete exports.images[image_index];
+    saveToMem();
 }
 
 exports.getTags = function(tagName, callback) {
-    exports.tags.find(
-        {name: { $regex: new RegExp(`^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`) } }
-    ).toArray(function(err, result) {
-        if(err) console.log(err);
-        callback(result);
-    });
+    const regex = new RegExp(`^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`);
+    const result = exports.tags.filter(function(tag) { return regex.test(tag.name); });
+    callback(result);
 }
 
 exports.setTag = function(pictureID, tagName) {
-    exports.tags.update({ name: tagName }, { name: tagName }, {upsert: true});
-    exports.images.update({ _id: pictureID }, { $addToSet: {tags: tagName} });
+    let image_index = exports.images.findIndex(function(i) { return i._id === pictureID; });
+    if (image_index === -1) {
+        return;
+    }
+
+    if (!exports.tags.some(function(t) { return t.name == tagName })) {
+        exports.insertTag(tagName);
+    }
+
+    exports.images[image_index].tags.push(tagName);
+    saveToMem();
 }
 
 exports.deleteTag = function(pictureID, tagName) {
-    exports.images.update({ _id: pictureID }, { $pull: {tags: tagName} });
+    let image_index = exports.images.findIndex(function(i) { return i._id === pictureID; });
+    if (image_index === -1) {
+        return;
+    }
+
+    exports.images[image_index].tags = exports.images[image_index].tags.filter(function(t) { return t != tagName; });
+    saveToMem();
 }
 
 exports.updatePicture = function(pictureID, pictureData, callback) {
-    exports.images.update(
-        { _id: pictureID },
-        { $set: pictureData },
-    function(err, result) {
-        if(err) {
-            console.log(err);
-            throw new Error(`Could not update the picture ${pictureID} with the values ${pictureData}`);
-        }
-        callback();
-    });
+    let image_index = exports.images.findIndex(function(i) { return i._id === pictureID; });
+    if (image_index === -1) {
+        return;
+    }
+
+    exports.images[image_index] = Object.assign({}, exports.images[image_index], pictureData);
+    saveToMem();
+    callback();
 }
 
 exports.getCountByTagList = function(tagList, callback) {
-    exports.images.count(
-        { tags: { $all: tagList } },
-    function(err, count) {
-        if(err) {
-            console.log(err);
-            throw new Error(`Could not retrieve the number of images for the tag ${tagName}`);
+    let tagListArray = tagList;
+    if (!Array.isArray(tagList)) tagListArray = [tagList];
+    const images = exports.images.filter(function(image) {
+        for (const tag of tagListArray) {
+            if (image.tags.indexOf(tag) === -1) return false;
         }
-        callback(count);
-    });
+        return true;
+    })
+
+    callback(images.length);
 }
 
 exports.getPictureData = function(pictureID, callback) {
-    exports.images.findOne(
-        { _id: pictureID },
-        function(err, result) {
-            if(err) console.log(err);
-            callback(result);
-        }
-    );
+    let image_index = exports.images.findIndex(function(i) { return i._id === pictureID; });
+    if (image_index === -1) {
+        return;
+    }
+
+    callback(Object.assign({}, exports.images[image_index]));
 }
 
-exports.getPicturesByTag = function(tagNames, skip, limit, callback) {
-    exports.images.find(
-        { tags: { $all: tagNames } },
-        { _id: 1, url: 1, tags: 1 },
-        {
-            skip: skip,
-            limit: limit,
+exports.getPicturesByTag = function(tagList, skip, limit, callback) {
+    let tagListArray = tagList;
+    if (!Array.isArray(tagList)) tagListArray = [tagList];
+    const images = exports.images.filter(function(image) {
+        for (const tag of tagListArray) {
+            if (image.tags.indexOf(tag) === -1) return false;
         }
-    ).toArray(function(err, result) {
-        if(err) {
-            console.log(err);
-            throw new Error(`Could not retrieve the images for the tags ${tagNames}`);
-        }
-        callback(result);
-    });
+        return true;
+    })
+    .slice(skip, limit - skip);
+    callback(images);
 }

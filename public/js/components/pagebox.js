@@ -30,7 +30,6 @@ Vue.component("page-box", {
                 });
                 curr++;
             }
-            console.log(array);
             return array;
         },
     },

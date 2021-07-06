@@ -19,9 +19,4 @@ Vue.component("image-data", {
             this.$emit("editSource", value);
         }
     },
-    watch: {
-        "image.rating": function() {
-            console.log("Test2");
-        }
-    }
 });

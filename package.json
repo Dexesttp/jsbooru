@@ -13,8 +13,7 @@
     "body-parser": "^1.16.0",
     "busboy": "^0.2.14",
     "connect-busboy": "0.0.2",
-    "express": "^4.14.0",
-    "tingodb": "^0.5.1"
+    "express": "^4.14.0"
   },
   "repository": {
     "url": "https://github.com/Dexesttp/jsbooru.git"

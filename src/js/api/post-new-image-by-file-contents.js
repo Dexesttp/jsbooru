@@ -11,7 +11,6 @@ module.exports = function(req, res) {
         const extension = path.extname(filename);
         const newFile = urlID + extension;
         const newFileAbsolute = path.resolve(config.imageFolder, newFile);
-        console.log(`Added file : ${newFileAbsolute}`);
         fstream = fs.createWriteStream(newFileAbsolute);
         file.pipe(fstream);
         fstream.on('close', function() {
@@ -19,7 +18,6 @@ module.exports = function(req, res) {
                 url: '/img/' + newFile,
                 tags: [],
             }, function(id) {
-                console.log(`Assigned ID : ${id}`);
                 res.redirect(`/#/view/${id}`);
             });
         });

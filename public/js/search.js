@@ -61,7 +61,6 @@ var Search = Vue.component('main-search', {
         },
         addTag: function(tag) {
             this.currTags = (this.currTags + " " + tag).trim();
-            console.log(this.request);
             this.goTo();
         },
         goTo: function() {

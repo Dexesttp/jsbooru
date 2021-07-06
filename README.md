@@ -85,11 +85,6 @@ The only requirements are NodeJS compatibility (NodeJS v6 is the target version)
 
 The goal is to use 100% Javascript/NodeJS librairies.
 
-- [TingoDB](http://www.tingodb.com/)
-  - Cool tiny project, uses the same api as MongoDB so upgrading to it should be a piece of cake !
-  - The idea is to have all the TinyDB initialization part in a file, and to switch the file with their MongoDB equivalents when needed.
-  - Note : as the database would quickly become the bottleneck of such a project, switching to MongoDB is something that would be advisable after a given user count.
-  - As such, there might be an already created MongoDB implementation hidden behind a server config down the line.
 - [Express](http://expressjs.com/)
   - ExpressJS is THE reference for NodeJS servers.
   - It is agremented of several components to handle data:
