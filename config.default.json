@@ -2,5 +2,6 @@
 	"database": "database",
 	"imageFolder": "images",
 	"staticFolder": "public",
+	"host": "localhost",
 	"port": "3000"
 }

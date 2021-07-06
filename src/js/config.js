@@ -5,6 +5,7 @@ const config = {
     database: "",
     imageFolder: "",
     staticFolder: "",
+    host: "localhost",
     port: 8000,
 };
 
@@ -38,6 +39,7 @@ exports.initConfig = function(extConfig) {
     config.database = path.resolve(__dirname, "../../", extConfig.database || "database");
     config.imageFolder = path.resolve(__dirname, "../../", extConfig.imageFolder || "images");
     config.staticFolder = path.resolve(__dirname, "../../", extConfig.staticFolder || "public");
+    config.host = extConfig.host || "localhost";
     config.port = extConfig.port || 3000;
     // Check access permissions
     if(!checkAccess(config.database)) {

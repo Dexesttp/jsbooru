@@ -76,10 +76,28 @@ The only way to edit the theme is to edit the file, and there is no current way 
 
 ### General informations
 
-THis project has the challenge of being able to run only on Javascript code - the only exception being the Python component used in [BSON](https://github.com/mongodb/js-bson), which is required by TingoDB.
+THis project has the challenge of being able to run only on Javascript code.
 
 The project is built solely using es3/5 for the front-end, and es6 features implemented in v8 for the backend.  
 The only requirements are NodeJS compatibility (NodeJS v6 is the target version) and VueJS compatibility.
+
+## Starting up
+
+Ensure that you have `node` (version 8 or higher) and `npm` (version 5 or higher) installed. You can find them [here](https://nodejs.org/en/) (`npm` will get installed automatically).
+
+To install the dependencies, you need run at least once:
+
+```bash
+npm install
+```
+
+Then, simply run:
+
+```bash
+npm start
+```
+
+To start the server with the default configuration.
 
 ### Librairies used
 

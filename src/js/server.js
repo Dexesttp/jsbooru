@@ -24,8 +24,8 @@ app.use("/img", express.static(config.imageFolder));
 app.use("/api", require("./api"));
 routes.init(app);
 
-app.listen(config.port, function() {
-    console.info(`Started app on port ${config.port}`);
+app.listen(config.port, config.host, function() {
+    console.info(`Started application on http://${config.host}:${config.port}`);
 }).on("error", function(err) {
     console.error(`Server error : ${err.message}`);
     console.info("Error opening the server. Are you sure the given port is valid ?");
