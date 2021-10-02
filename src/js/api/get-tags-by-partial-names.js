@@ -1,7 +1,9 @@
 const database = require("../database");
+const encode = require("../utils").encode;
 
-module.exports = function (req, res) {
-    const request = req.query.q ? req.query.q.split(" ") : [];
+module.exports = function(req, res) {
+    const unsafeRequest = req.query.q ? req.query.q.split(" ") : [];
+    const request = unsafeRequest.map(tag => encode(tag));
     const firsts = request.slice(0, -1);
     const queried = request.length > 0 ? request[request.length - 1] : "";
     if (queried === "" || queried === "*") {

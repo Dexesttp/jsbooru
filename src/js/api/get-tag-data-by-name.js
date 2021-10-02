@@ -1,8 +1,10 @@
 const database = require("../database");
+const encode = require("../utils").encode;
 
 module.exports = function (req, res) {
     const tagName = req.params.name;
-    const tagList = tagName.split(" ");
+    const unsafeTagList = tagName.split(" ");
+    const tagList = unsafeTagList.map(tag => encode(tag));
     if (tagList.length > 1) {
         database.getCountByTagList(tagList).then((count) => {
             res.send({

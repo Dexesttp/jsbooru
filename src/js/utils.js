@@ -1,3 +1,6 @@
+const Entities = require("html-entities").AllHtmlEntities;
+const entities = new Entities();
+
 /**
  * Returns a new rfc4122-v4 compliant UUID
  * Source : @Broofa at http://stackoverflow.com/a/2117523/6335555
@@ -14,3 +17,10 @@ exports.uuid = function uuid() {
         }
     );
 };
+
+/**
+ * Encode the given string as a HTML-safe string.
+ * @param {string} data the string to encode.
+ * @return {string} a safe string
+ */
+exports.encode = entities.encode;
