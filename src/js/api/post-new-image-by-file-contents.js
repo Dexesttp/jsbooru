@@ -14,15 +14,14 @@ module.exports = function (req, res) {
         fstream = fs.createWriteStream(newFileAbsolute);
         file.pipe(fstream);
         fstream.on("close", function () {
-            database.insertPicture(
-                {
+            database
+                .insertPicture({
                     url: "/img/" + newFile,
                     tags: [],
-                },
-                function (id) {
+                })
+                .then(function (id) {
                     res.redirect(`/#/view/${id}`);
-                }
-            );
+                });
         });
     });
     return;

@@ -2,12 +2,12 @@ const database = require("../database");
 
 module.exports = function (req, res) {
     const id = req.params.id;
-    database.getPictureData(req.params.id, function (data) {
+    database.getPictureData(req.params.id).then(function (data) {
         Promise.all(
             data.tags.map((tagName) => {
                 return new Promise(function (resolve, reject) {
-                    database.getTagDataByName(tagName, (tagData) => {
-                        database.getCountByTagList(tagName, (count) => {
+                    database.getTagDataByName(tagName).then((tagData) => {
+                        database.getCountByTagList(tagName).then((count) => {
                             resolve({
                                 name: tagName,
                                 type:

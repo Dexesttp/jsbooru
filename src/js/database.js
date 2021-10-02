@@ -77,11 +77,13 @@ exports.updateTag = function (tagName, tagData) {
     saveToMem();
 };
 
-exports.insertPicture = function (pictureData, callback) {
-    let new_uuid = uuid();
-    exports.images.push(Object.assign({}, pictureData, { _id: new_uuid }));
-    saveToMem();
-    callback(new_uuid);
+exports.insertPicture = function (pictureData) {
+    return new Promise((resolve) => {
+        let new_uuid = uuid();
+        exports.images.push(Object.assign({}, pictureData, { _id: new_uuid }));
+        saveToMem();
+        resolve(new_uuid);
+    });
 };
 
 exports.deletePicture = function (pictureID) {
@@ -95,21 +97,25 @@ exports.deletePicture = function (pictureID) {
     saveToMem();
 };
 
-exports.getTags = function (tagName, callback) {
-    const regex = new RegExp(
-        `^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`
-    );
-    const result = exports.tags.filter(function (tag) {
-        return regex.test(tag.name);
+exports.getTags = function (tagName) {
+    return new Promise((resolve) => {
+        const regex = new RegExp(
+            `^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`
+        );
+        const result = exports.tags.filter(function (tag) {
+            return regex.test(tag.name);
+        });
+        resolve(result);
     });
-    callback(result);
 };
 
-exports.getTagDataByName = function (tagName, callback) {
-    const result = exports.tags.find(function (tag) {
-        return tag.name === tagName;
+exports.getTagDataByName = function (tagName) {
+    return new Promise((resolve) => {
+        const result = exports.tags.find(function (tag) {
+            return tag.name === tagName;
+        });
+        resolve(result);
     });
-    callback(result);
 };
 
 exports.setTag = function (pictureID, tagName) {
@@ -148,57 +154,66 @@ exports.deleteTag = function (pictureID, tagName) {
     saveToMem();
 };
 
-exports.updatePicture = function (pictureID, pictureData, callback) {
-    let image_index = exports.images.findIndex(function (i) {
-        return i._id === pictureID;
-    });
-    if (image_index === -1) {
-        return;
-    }
-
-    exports.images[image_index] = Object.assign(
-        {},
-        exports.images[image_index],
-        pictureData
-    );
-    saveToMem();
-    callback();
-};
-
-exports.getCountByTagList = function (tagList, callback) {
-    let tagListArray = tagList;
-    if (!Array.isArray(tagList)) tagListArray = [tagList];
-    const images = exports.images.filter(function (image) {
-        for (const tag of tagListArray) {
-            if (image.tags.indexOf(tag) === -1) return false;
+exports.updatePicture = function (pictureID, pictureData) {
+    return new Promise((resolve) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            return;
         }
-        return true;
-    });
 
-    callback(images.length);
+        exports.images[image_index] = Object.assign(
+            {},
+            exports.images[image_index],
+            pictureData
+        );
+        saveToMem();
+        resolve();
+    });
 };
 
-exports.getPictureData = function (pictureID, callback) {
-    let image_index = exports.images.findIndex(function (i) {
-        return i._id === pictureID;
-    });
-    if (image_index === -1) {
-        return;
-    }
-
-    callback(Object.assign({}, exports.images[image_index]));
-};
-
-exports.getPicturesByTag = function (tagList, skip, limit, callback) {
-    let tagListArray = tagList;
-    if (!Array.isArray(tagList)) tagListArray = [tagList];
-    const images = exports.images
-        .filter(function (image) {
+exports.getCountByTagList = function (tagList) {
+    return new Promise((resolve) => {
+        let tagListArray = tagList;
+        if (!Array.isArray(tagList)) tagListArray = [tagList];
+        const images = exports.images.filter(function (image) {
             for (const tag of tagListArray) {
                 if (image.tags.indexOf(tag) === -1) return false;
             }
             return true;
-        })
-        .slice(skip, limit - skip);
-    callback(images);
+        });
+
+        resolve(images.length);
+    });
+};
+
+exports.getPictureData = function (pictureID) {
+    return new Promise((resolve, reject) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            reject();
+            return;
+        }
+
+        resolve(Object.assign({}, exports.images[image_index]));
+    });
+};
+
+exports.getPicturesByTag = function (tagList, skip, limit) {
+    return new Promise((resolve) => {
+        let tagListArray = tagList;
+        if (!Array.isArray(tagList)) tagListArray = [tagList];
+        const images = exports.images
+            .filter(function (image) {
+                for (const tag of tagListArray) {
+                    if (image.tags.indexOf(tag) === -1) return false;
+                }
+                return true;
+            })
+            .slice(skip, limit - skip);
+        resolve(images);
+    });
 };

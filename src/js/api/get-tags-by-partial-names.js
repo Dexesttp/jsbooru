@@ -19,7 +19,7 @@ module.exports = function (req, res) {
         ]);
         return;
     }
-    database.getTags(queried, function (results) {
+    database.getTags(queried).then(function (results) {
         if (results.length === 0) {
             res.send([
                 {
@@ -38,7 +38,7 @@ module.exports = function (req, res) {
         Promise.all(
             results.map((tag) => {
                 return new Promise(function (resolve, reject) {
-                    database.getCountByTagList(tag.name, (count) => {
+                    database.getCountByTagList(tag.name).then((count) => {
                         resolve({
                             name: tag.name,
                             type: tag.type || "no-type",
