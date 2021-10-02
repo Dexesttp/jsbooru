@@ -190,7 +190,7 @@ exports.insertTagWiki = function (tagName, wiki) {
  * Get the list of pictures.
  * @returns {Promise<ImageData[]>} the picture list.
  */
-exports.getPictures = function () {
+exports.getAllPictures = function () {
     return new Promise((resolve, reject) => {
         exports.images.map(function (err, result) {
             if (err) {
@@ -232,15 +232,24 @@ exports.getTagWiki = function (tagName) {
     });
 };
 
+/**
+ * Deletes a picture from its ID
+ * @param {string} pictureID the ID of the picture to delete from the database
+ * @returns {Promise<void>} Resolves once the picture data is deleted. Rejects if the picture data doesn't exist.
+ */
 exports.deletePicture = function (pictureID) {
-    let image_index = exports.images.findIndex(function (i) {
-        return i._id === pictureID;
+    return new Promise((resolve, reject) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            reject();
+            return;
+        }
+        exports.images.splice(image_index, 1);
+        saveToMem();
+        resolve();
     });
-    if (image_index === -1) {
-        return;
-    }
-    delete exports.images[image_index];
-    saveToMem();
 };
 
 exports.getTags = function (tagName) {
@@ -257,14 +266,18 @@ exports.getTags = function (tagName) {
 
 /**
  * Get the tag information for a given tag
- * @param {string} tagName the tag name to match
- * @return {Promise<TagData>} the promise of the match.
+ * @param {string} tagName the name of the tag to find
+ * @return {Promise<TagData>} A promise of the tag data. Rejects if the tag doesn't exist.
  */
 exports.getTagDataByName = function (tagName) {
     return new Promise((resolve) => {
         const result = exports.tags.find(function (tag) {
             return tag.name === tagName;
         });
+        if (!result) {
+            reject();
+            return;
+        }
         resolve(result);
     });
 };
@@ -273,7 +286,7 @@ exports.getTagDataByName = function (tagName) {
  * Adds the given tag to the given picture
  * @param {string} pictureID the ID of the picture to modify
  * @param {string} tagName the name of the tag to insert
- * @return {Promise<void>} resolves when the tag is inserted properly
+ * @return {Promise<void>} Resolves when the tag is inserted properly. Rejects if the picture doesn't exist.
  */
 exports.insertTagOnPicture = function (pictureID, tagName) {
     return new Promise((resolve, reject) => {
@@ -299,7 +312,13 @@ exports.insertTagOnPicture = function (pictureID, tagName) {
     });
 };
 
-exports.deleteTag = function (pictureID, tagName) {
+/**
+ * Removes the given tag from the given picture
+ * @param {string} pictureID the ID of the picture to modify
+ * @param {string} tagName the name of the tag to remove
+ * @return {Promise<void>} Resolves when the tag is removed properly. Rejects if the picture doesn't exist.
+ */
+exports.deleteTagFromPicture = function (pictureID, tagName) {
     return new Promise((resolve, reject) => {
         let image_index = exports.images.findIndex(function (i) {
             return i._id === pictureID;
@@ -359,7 +378,12 @@ exports.getCountByTagList = function (tagList) {
     });
 };
 
-exports.getPictureData = function (pictureID) {
+/**
+ * Get the picture data from a picture ID
+ * @param {string} pictureID the ID of the picture to find
+ * @returns {Promise<ImageData>} the promise of the iimage data. Rejects if the picture doesn't exist
+ */
+exports.getPicture = function (pictureID) {
     return new Promise((resolve, reject) => {
         let image_index = exports.images.findIndex(function (i) {
             return i._id === pictureID;

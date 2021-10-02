@@ -18,5 +18,8 @@ Vue.component("image-data", {
         editSource: function (value) {
             this.$emit("editSource", value);
         },
+        deleteImage: function () {
+            this.$emit("deleteImage");
+        },
     },
 });

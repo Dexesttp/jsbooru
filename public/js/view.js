@@ -82,6 +82,11 @@ var View = Vue.component("main-view", {
         toggleSizeLimit: function () {
             this.limitSize = !this.limitSize;
         },
+        deleteImage: function () {
+            this.$http.delete("image/" + this.id).then(function () {
+                router.push("/");
+            });
+        },
     },
     created: function (to, from) {
         this.init();

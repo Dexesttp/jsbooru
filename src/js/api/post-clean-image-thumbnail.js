@@ -6,7 +6,7 @@ const thumb = require("../thumbnailer");
 
 module.exports = function (req, res) {
     database
-        .getPictures()
+        .getAllPictures()
         .then((pictures) => {
             const nonCreatedThumbnails = pictures.filter(
                 (p) => !p.thumbnail && p.url

@@ -4,7 +4,7 @@ const config = require("../config").config;
 
 module.exports = function (req, res) {
     Promise.all([
-        database.getPictures(),
+        database.getAllPictures(),
         fs.readdir(config.imageFolder),
         fs.readdir(config.thumbnailFolder),
     ])

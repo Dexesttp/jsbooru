@@ -1,7 +1,7 @@
 const database = require("../database");
 
 module.exports = function (req, res) {
-    database.getPictureData(req.params.id).then(function (data) {
+    database.getPicture(req.params.id).then(function (data) {
         Promise.all(
             data.tags.map((tagName) => {
                 return new Promise(function (resolve, reject) {

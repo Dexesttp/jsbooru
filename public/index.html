@@ -136,6 +136,9 @@
     	<div>
     		<a :href="image.url" target="_blank">Download picture</a>
     	</div>
+    	<div>
+    		<a href="#" @click="deleteImage()">Delete picture</a>
+    	</div>
     </section>
   </script>
 
@@ -152,7 +155,8 @@
     		<image-data v-if="image" :image="image"
     				@editRating="editRating"
     				@editUser="editUser"
-    				@editSource="editSource">
+    				@editSource="editSource"
+    				@deleteImage="deleteImage">
     		</image-data>
     	</aside>
     </div>
