@@ -7,6 +7,7 @@ var View = Vue.component("main-view", {
             id: "",
             image: null,
             tags: [],
+            limitSize: true,
         };
     },
     methods: {
@@ -77,6 +78,9 @@ var View = Vue.component("main-view", {
             this.$http.post("image/" + this.id, data).then(function (reply) {
                 self.selectImage();
             });
+        },
+        toggleSizeLimit: function () {
+            this.limitSize = !this.limitSize;
         },
     },
     created: function (to, from) {

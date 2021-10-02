@@ -96,6 +96,12 @@ menu.main li {
   font-size: 0.8em;
 }
 
+/* View */
+#image img.limit {
+  max-width: 95%;
+  max-height: 90vh;
+}
+
 /* Thumbnails */
 .post-preview {
   margin: 0 10px 10px 0;
@@ -131,10 +137,6 @@ menu.main li {
 
 .reply > .count {
   float: right;
-}
-
-#footer {
-  text-align: center;
 }
 
 /* page selection */

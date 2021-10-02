@@ -125,10 +125,12 @@
     			:allowedEntries="['safe', 'questionnable', 'explicit']" />
     	<editable-text unknown="UNKNOWN"
     			title="Source: " :value="image.source" :url="image.source"
-    			:canEdit="true" @edit="editSource"/>
+    			:canEdit="true" @edit="editSource" />
     	<editable-text unknown="UNKNOWN"
     			title="Uploader: " :value="image.user" :url="'/user/' + image.user"
-    			:canEdit="true" @edit="editUser"/>
+    			:canEdit="true" @edit="editUser" />
+    	<div>
+    		<a :href="image.url" target="_blank">Download picture</a>
     	</div>
     </section>
   </script>
@@ -137,7 +139,7 @@
   <script type="text/x-template" id="view-template">
     <div id="content">
     	<section id="image">
-    		<img v-if="image" v-bind:src="image.url" />
+    		<img v-if="image" :src="image.url" :class="{ limit: limitSize }" @click="toggleSizeLimit" />
     	</section>
     	<aside>
     		<search-box @select="setRequest"></search-box>
