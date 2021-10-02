@@ -6,9 +6,6 @@ const uuid = require("../utils").uuid;
 const thumb = require("../thumbnailer");
 
 function saveInDBAndRedirect(res, newFile, urlID, hash) {
-    if (hash) {
-        console.info(`Thumbnail hash : ${hash}`);
-    }
     return database
         .insertPicture(
             hash
@@ -24,7 +21,6 @@ function saveInDBAndRedirect(res, newFile, urlID, hash) {
                   }
         )
         .then((id) => {
-            console.info(`Assigned ID : ${id}`);
             res.redirect(`/#/view/${id}`);
         })
         .catch((e) => {
@@ -36,16 +32,24 @@ function saveInDBAndRedirect(res, newFile, urlID, hash) {
         });
 }
 
+const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"];
+
 module.exports = function (req, res) {
     req.pipe(req.busboy);
     req.busboy.on("file", function (fieldname, file, filename) {
         const urlID = uuid();
         const extension = path.extname(filename);
+        // Only allow certain extensions
+        if (!allowedExtensions.some((e) => e === extension)) {
+            res.status(500);
+            res.send(`The uploaded picture doesn't have a valid extension.`);
+            return;
+        }
         const newFile = urlID + extension;
         const newFileAbsolute = path.resolve(config.imageFolder, newFile);
         fstream = fs.createWriteStream(newFileAbsolute);
         file.pipe(fstream);
-        fstream.on("close", function () {
+        fstream.on("close", () => {
             thumb
                 .createThumbnail(newFileAbsolute)
                 .then((hash) => saveInDBAndRedirect(res, newFile, urlID, hash))

@@ -28,7 +28,6 @@ exports.createThumbnail = function (absoluteFileName) {
                     reject(err);
                     return;
                 }
-                console.info(`Created thumbnail : ${thumbnailPath}`);
                 resolve(image.hash());
             });
         });
