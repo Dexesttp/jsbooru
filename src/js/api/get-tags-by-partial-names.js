@@ -4,14 +4,17 @@ module.exports = function (req, res) {
     const request = req.query.q ? req.query.q.split(" ") : [];
     const firsts = request.slice(0, -1);
     const queried = request.length > 0 ? request[request.length - 1] : "";
-    if (queried === "") {
+    if (queried === "" || queried === "*") {
         res.send([
             {
                 result: request.join(" "),
+                type: "all-match",
                 query: queried,
                 name: request.join(" "),
                 match: true,
                 count: 0,
+                count: 0,
+                count: queried === "*" ? "all" : 0,
             },
         ]);
         return;
@@ -21,6 +24,7 @@ module.exports = function (req, res) {
             res.send([
                 {
                     result: request.join(" "),
+                    type: "no-match",
                     query: queried,
                     name: "(no match)",
                     match: false,
@@ -35,7 +39,11 @@ module.exports = function (req, res) {
             results.map((tag) => {
                 return new Promise(function (resolve, reject) {
                     database.getCountByTagList(tag.name, (count) => {
-                        resolve({ name: tag.name, count: count });
+                        resolve({
+                            name: tag.name,
+                            type: tag.type || "no-type",
+                            count: count,
+                        });
                     });
                 });
             })
@@ -43,6 +51,7 @@ module.exports = function (req, res) {
             res.send(
                 tags.map((r) => ({
                     result: str + r.name,
+                    type: r.type,
                     query: queried,
                     name: r.name,
                     match: true,

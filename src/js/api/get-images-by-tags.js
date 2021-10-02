@@ -3,11 +3,13 @@ const database = require("../database");
 module.exports = function (req, res) {
     const start = +req.query.s || 0;
     const tags = req.query.q ? req.query.q.split(" ") : [];
-    const uniqueTags = tags.filter((i, idx, arr) => {
+    const shouldSearchAll = req.query.q === "" || req.query.q === "*";
+    const uniqueTagsFromSearchQuery = tags.filter((i, idx, arr) => {
         return arr.indexOf(i) === idx;
     });
-    database.getCountByTagList(uniqueTags, (count) => {
-        database.getPicturesByTag(uniqueTags, start, 20, (pics) => {
+    const tagsToSearch = shouldSearchAll ? [] : uniqueTagsFromSearchQuery;
+    database.getCountByTagList(tagsToSearch, (count) => {
+        database.getPicturesByTag(tagsToSearch, start, 20, (pics) => {
             Promise.all(
                 pics
                     .reduce((prev, curr) => prev.concat(curr.tags), [])
