@@ -21,33 +21,28 @@ var Search = Vue.component("main-search", {
         },
         getItems: function () {
             var self = this;
-            var ajax = new XMLHttpRequest();
-            if (this.currTags)
-                ajax.open(
-                    "GET",
-                    "/api/image?q=" + this.currTags + "&s=" + this.pos
-                );
-            else ajax.open("GET", "/api/image?s=" + this.pos);
-            ajax.addEventListener("loadend", function (data) {
-                var json = JSON.parse(this.responseText);
-                self.count = json.count;
-                self.images = json.result.map(function (image) {
-                    return {
-                        id: image._id,
-                        link: `/view?id=${image._id}`,
-                        thumbnail: image.url,
-                        tags: image.tags ? image.tags.join(" ") : "",
-                    };
+
+            this.$http
+                .get("image", { params: { s: this.pos, q: this.currTags } })
+                .then(function (response) {
+                    self.count = response.body.count;
+                    self.images = response.body.result.map(function (image) {
+                        return {
+                            id: image._id,
+                            link: "/view/" + image._id,
+                            thumbnail: image.url,
+                            tags: image.tags ? image.tags.join(" ") : "",
+                        };
+                    });
+                    self.tags = response.body.tags.sort(function (a, b) {
+                        if (a < b) return -1;
+                        if (a > b) return 1;
+                        return 0;
+                    });
+                })
+                .then(undefined, function (response) {
+                    console.warn("Request failed on image list get");
                 });
-                self.tags = json.tags.sort(function (a, b) {
-                    var nameA = a.name.toUpperCase();
-                    var nameB = b.name.toUpperCase();
-                    if (nameA < nameB) return -1;
-                    if (nameA > nameB) return 1;
-                    return 0;
-                });
-            });
-            ajax.send();
         },
         selectImage: function (imageID) {
             router.push("/view/" + imageID);

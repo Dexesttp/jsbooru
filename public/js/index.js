@@ -9,6 +9,8 @@ var router = new VueRouter({
     ],
 });
 
+Vue.http.options.root = "/api";
+
 var app = new Vue({
     router: router,
     data: {

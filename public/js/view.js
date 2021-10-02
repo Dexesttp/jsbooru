@@ -16,20 +16,21 @@ var View = Vue.component("main-view", {
         },
         selectImage: function () {
             var self = this;
-            var ajax = new XMLHttpRequest();
-            ajax.open("GET", "/api/image/" + this.id);
-            ajax.addEventListener("loadend", function (data) {
-                var json = JSON.parse(this.responseText);
-                self.image = json;
-                self.tags = json.tags.sort(function (a, b) {
-                    var nameA = a.name.toUpperCase();
-                    var nameB = b.name.toUpperCase();
-                    if (nameA < nameB) return -1;
-                    if (nameA > nameB) return 1;
-                    return 0;
+            this.$http
+                .get("image/" + this.id)
+                .then(function (response) {
+                    self.image = response.body;
+                    self.tags = response.body.tags.sort(function (a, b) {
+                        var nameA = a.name.toUpperCase();
+                        var nameB = b.name.toUpperCase();
+                        if (nameA < nameB) return -1;
+                        if (nameA > nameB) return 1;
+                        return 0;
+                    });
+                })
+                .then(undefined, function (error) {
+                    console.warn(error);
                 });
-            });
-            ajax.send();
         },
         setRequest: function (request) {
             router.push("/search?q=" + request);
@@ -38,12 +39,11 @@ var View = Vue.component("main-view", {
             var self = this;
             var tag = tags.trim().split(" ").pop();
             if (confirm("Add the tag '" + tag + "' to this picture ?")) {
-                var ajax = new XMLHttpRequest();
-                ajax.open("POST", "/api/image/" + this.id + "/" + tag);
-                ajax.addEventListener("loadend", function (data) {
-                    self.selectImage();
-                });
-                ajax.send();
+                this.$http
+                    .post("image/" + this.id + "/" + tag)
+                    .then(function (reply) {
+                        self.selectImage();
+                    });
             }
         },
         deleteTag: function (tagName) {
@@ -51,12 +51,11 @@ var View = Vue.component("main-view", {
             if (
                 confirm("Delete the tag '" + tagName + "' from this picture ?")
             ) {
-                var ajax = new XMLHttpRequest();
-                ajax.open("DELETE", "/api/image/" + this.id + "/" + tagName);
-                ajax.addEventListener("loadend", function (data) {
-                    self.selectImage();
-                });
-                ajax.send();
+                this.$http
+                    .delete("image/" + this.id + "/" + tagName)
+                    .then(function (reply) {
+                        self.selectImage();
+                    });
             }
         },
         editRating: function (value) {
@@ -73,15 +72,11 @@ var View = Vue.component("main-view", {
         },
         setImageValue: function (name, value) {
             var self = this;
-            var ajax = new XMLHttpRequest();
-            ajax.open("POST", "/api/image/" + this.id);
-            ajax.setRequestHeader("Content-Type", "application/json");
-            ajax.addEventListener("loadend", function (data) {
-                self.selectImage();
-            });
             var data = {};
             data[name] = value;
-            ajax.send(JSON.stringify(data));
+            this.$http.post("image/" + this.id, data).then(function (reply) {
+                self.selectImage();
+            });
         },
     },
     created: function (to, from) {
