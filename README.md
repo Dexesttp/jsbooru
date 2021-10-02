@@ -14,20 +14,26 @@ This project was originally made for a raspberry based Booru board.
 
 Here is a list of feature we would want to integrate to JSBooru - starting from the most obvious ones to the most advanced !
 
-- [x] Upload pictures, picture info (such as source)
-- [x] Add tags to pictures
-- [x] Search by tags
-- [ ] Tag categories
-- [ ] User login and options (exclude tags, disable comments, ...)
-- [ ] Score/favourites sytem and related searches
-- [ ] Comment system
-- [ ] Notes/translations system
-- [ ] Wiki & Tag definitions
-- [ ] Administration (flags, appeals, user management, image management)
-- [ ] Board API
-- [ ] Neverending scrolling
-- [ ] Customizable board theme
-- [ ] User themes
+- [x] Phase 1
+  - [x] Upload pictures, picture info (such as source)
+  - [x] Add tags to pictures
+  - [x] Search by tags
+- Phase 2
+  - [ ] User login and options (exclude tags, disable comments, ...)
+  - [ ] Score/favourites system
+- Phase 3
+  - [ ] Comment system
+  - [ ] Notes/translations system
+  - [ ] Wiki & Tag definitions
+- Phase 4
+  - [ ] Administration (flags, appeals, user management, image management)
+- Extra features
+  - [ ] Tag categories
+  - [ ] Related pictures
+  - [ ] Neverending scrolling
+  - [ ] Server-wide customizable board theme
+  - [ ] User theme choice
+  - [ ] Board API
 
 Here are some other features that we don't want to implement
 
