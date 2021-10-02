@@ -415,7 +415,7 @@ exports.getPicturesByTag = function (tagList, skip, limit) {
                 }
                 return true;
             })
-            .slice(skip, limit - skip);
+            .slice(skip, skip + limit);
         resolve(images);
     });
 };
