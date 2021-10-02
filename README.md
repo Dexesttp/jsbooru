@@ -117,6 +117,7 @@ The goal is to use 100% Javascript/NodeJS librairies.
 - [VueJS](http://vuejs.org/)
   - VueJS is one of the rising front-end presenters in the market.
   - It is agremented of several components for ease-of-use.
+    - [vue-resource](https://github.com/pagekit/vue-resource) Easier HTTP calls, certainly beats using plain `XMLHttpRequest`.
     - [vue-router](https://router.vuejs.org/) adds page and hstory (back button) management to VueJS.
     - [vue2-autocomplete](https://github.com/BosNaufal/vue2-autocomplete) adds autocompletion for search results.
 
