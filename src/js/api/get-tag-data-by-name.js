@@ -4,7 +4,7 @@ const encode = require("../utils").encode;
 module.exports = function (req, res) {
     const tagName = req.params.name;
     const unsafeTagList = tagName.split(" ");
-    const tagList = unsafeTagList.map(tag => encode(tag));
+    const tagList = unsafeTagList.map((tag) => encode(tag));
     if (tagList.length > 1) {
         database.getCountByTagList(tagList).then((count) => {
             res.send({
@@ -16,7 +16,7 @@ module.exports = function (req, res) {
         return;
     }
     database.getTagDataByName(tagName).then((tagData) => {
-        database.getCountByTagList(tagList).then(function (data) {
+        database.getTagCount(tagName).then(function (data) {
             res.send({
                 name: req.params.name,
                 type: (tagData ? tagData.type : "") || "no-type",

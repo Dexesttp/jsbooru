@@ -7,7 +7,7 @@ module.exports = function (req, res) {
             data.tags.map((tagName) => {
                 return new Promise(function (resolve, reject) {
                     database.getTagDataByName(tagName).then((tagData) => {
-                        database.getCountByTagList(tagName).then((count) => {
+                        database.getTagCount(tagName).then((count) => {
                             resolve({
                                 name: tagName,
                                 type:

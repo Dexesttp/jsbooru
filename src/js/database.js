@@ -7,13 +7,23 @@ const toStartByRegex = require("./utils").toStartByRegex;
 const collectionNames = {
     images: "pictures",
     tags: "tags",
+    tagcounts: "tag_counts",
 };
 
-/** @type {[{ _id: string, url: string, tags: string[] }]} */
+/**
+ * @typedef {{ _id: string, url: string, tags: string[] }} ImageData
+ * @typedef {{ _id: string, name: string, type: string }} TagData
+ * @typedef {{ name: string, count: number }} TagCountData
+ */
+
+/** @type {ImageData[]} */
 exports.images = [];
 
-/** @type {[{ _id: string, name: string }]} */
+/** @type {TagData[]} */
 exports.tags = [];
+
+/** @type {TagCountData[]} */
+exports.tagcounts = [];
 
 function saveToMem() {
     const images_file_path = path.join(
@@ -31,6 +41,15 @@ function saveToMem() {
     const tags_data = JSON.stringify(exports.tags);
     if (fs.existsSync(tags_file_path)) fs.unlinkSync(tags_file_path);
     fs.writeFileSync(tags_file_path, tags_data);
+
+    const tag_counts_file_path = path.join(
+        config.database,
+        `${collectionNames.tagcounts}.json`
+    );
+    const tag_counts_data = JSON.stringify(exports.tagcounts);
+    if (fs.existsSync(tag_counts_file_path))
+        fs.unlinkSync(tag_counts_file_path);
+    fs.writeFileSync(tag_counts_file_path, tag_counts_data);
 }
 
 exports.init = function () {
@@ -54,30 +73,65 @@ exports.init = function () {
         exports.tags = tags;
     }
 
-    saveToMem();
-};
-
-exports.insertTag = function (tagName) {
-    let new_uuid = uuid();
-    exports.tags.push(Object.assign({}, { name: tagName }, { _id: new_uuid }));
-    saveToMem();
-};
-
-exports.updateTag = function (tagName, tagData) {
-    let tag_index = exports.tags.findIndex(function (tag) {
-        return tag.name === tagName;
-    });
-    if (tag_index === -1) {
-        return;
-    }
-    exports.tags[tag_index] = Object.assign(
-        {},
-        exports.tags[tag_index],
-        tagData
+    const tag_counts_file_path = path.join(
+        config.database,
+        `${collectionNames.tagcounts}.json`
     );
+    if (fs.existsSync(tag_counts_file_path)) {
+        const tag_counts_file_contents = fs.readFileSync(tag_counts_file_path);
+        const tagcounts = JSON.parse(tag_counts_file_contents);
+        exports.tagcounts = tagcounts;
+    }
+
     saveToMem();
 };
 
+/**
+ * Inserts a new tag in the database
+ * @param {string} tagName The name of the tag to insert
+ * @returns {Promise<string>} The UUID of the new tag.
+ */
+exports.insertTag = function (tagName) {
+    return new Promise((resolve) => {
+        let new_uuid = uuid();
+        exports.tags.push(
+            Object.assign({}, { name: tagName }, { _id: new_uuid })
+        );
+        saveToMem();
+        resolve(new_uuid);
+    });
+};
+
+/**
+ * Updates the given tag with the given tag data.
+ * @param {string} tagName the tag to update
+ * @param {{ name: string, type?: string}} tagData the new data to set.
+ * @return {Promise<TagData>} the promise of a result.
+ */
+exports.updateTag = function (tagName, tagData) {
+    return new Promise((resolve, reject) => {
+        let tag_index = exports.tags.findIndex(function (tag) {
+            return tag.name === tagName;
+        });
+        if (tag_index === -1) {
+            reject();
+            return;
+        }
+        exports.tags[tag_index] = Object.assign(
+            {},
+            exports.tags[tag_index],
+            tagData
+        );
+        saveToMem();
+        resolve(Object.assign({}, exports.tags[tag_index]));
+    });
+};
+
+/**
+ * Inserts a new picture based on the picture data.
+ * @param {{ thumbnail: string, tags: string[]}} pictureData the picture data to insert
+ * @return {Promise<string>} the inserted picture's ID.
+ */
 exports.insertPicture = function (pictureData) {
     return new Promise((resolve) => {
         let new_uuid = uuid();
@@ -91,20 +145,31 @@ exports.insertPicture = function (pictureData) {
 
 /**
  * Get the list of pictures.
- * @returns {Promise<any[]>} the picture list.
+ * @returns {Promise<ImageData[]>} the picture list.
  */
- exports.getPictures = function() {
+exports.getPictures = function () {
     return new Promise((resolve, reject) => {
-        exports.images.find()
-        .toArray(function(err, result) {
-            if(err) { reject(err); return; }
+        exports.images.map(function (err, result) {
+            if (err) {
+                reject(err);
+                return;
+            }
             resolve(result);
         });
     });
-}
+};
 
-// Pure update
-
+/**
+ * Get the tag count for an unique tag.
+ * @param {string} tagName the name of the tag to retrieve the count for.
+ * @return {Promise<number>} a promise on the count.
+ */
+exports.getTagCount = function (tagName) {
+    return new Promise((resolve, reject) => {
+        const result = exports.tagcounts.find((t) => t.name === tagName);
+        resolve(result ? result.count : 0);
+    });
+};
 
 exports.deletePicture = function (pictureID) {
     let image_index = exports.images.findIndex(function (i) {
@@ -129,6 +194,11 @@ exports.getTags = function (tagName) {
     });
 };
 
+/**
+ * Get the tag information for a given tag
+ * @param {string} tagName the tag name to match
+ * @return {Promise<TagData>} the promise of the match.
+ */
 exports.getTagDataByName = function (tagName) {
     return new Promise((resolve) => {
         const result = exports.tags.find(function (tag) {
@@ -137,23 +207,6 @@ exports.getTagDataByName = function (tagName) {
         resolve(result);
     });
 };
-
-/**
- * Get the tags that begins by the given string.
- * @return {Promise<any[]>} the promise of the matches.
- */
-exports.getTagsFromPartialTagName = function(tagName) {
-    return toStartByRegex(tagName)
-    .then((expr) =>
-    new Promise((resolve, reject) => {
-        exports.tags.find(
-            {name: { $regex: expr } }
-        ).toArray(function(err, result) {
-            if(err) { reject(err); return; }
-            resolve(result);
-        });
-    }));
-}
 
 exports.setTag = function (pictureID, tagName) {
     let image_index = exports.images.findIndex(function (i) {
@@ -176,21 +229,31 @@ exports.setTag = function (pictureID, tagName) {
 };
 
 exports.deleteTag = function (pictureID, tagName) {
-    let image_index = exports.images.findIndex(function (i) {
-        return i._id === pictureID;
-    });
-    if (image_index === -1) {
-        return;
-    }
-
-    exports.images[image_index].tags = exports.images[image_index].tags.filter(
-        function (t) {
-            return t != tagName;
+    return new Promise((resolve, reject) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            reject();
+            return;
         }
-    );
-    saveToMem();
+
+        exports.images[image_index].tags = exports.images[
+            image_index
+        ].tags.filter(function (t) {
+            return t != tagName;
+        });
+        saveToMem();
+        resolve();
+    });
 };
 
+/**
+ * Update the given picture
+ * @param {string} pictureID the picture ID
+ * @param {ImageData} pictureData the picture data.
+ * @return {Promise<void>} the promise.
+ */
 exports.updatePicture = function (pictureID, pictureData) {
     return new Promise((resolve) => {
         let image_index = exports.images.findIndex(function (i) {
@@ -253,4 +316,24 @@ exports.getPicturesByTag = function (tagList, skip, limit) {
             .slice(skip, limit - skip);
         resolve(images);
     });
+};
+
+exports.updateTagCounts = function () {
+    for (const tag of exports.tags) {
+        const tagName = tag.name;
+        const imageCount = exports.images.filter((i) =>
+            i.tags.some((t) => t === tagName)
+        ).length;
+        const entry = exports.tagcounts.find((t) => t.name === tagName);
+        if (entry) {
+            entry.count = imageCount;
+            continue;
+        }
+        exports.tagcounts.push({
+            name: tagName,
+            count: imageCount,
+        });
+    }
+    saveToMem();
+    return Promise.resolve();
 };

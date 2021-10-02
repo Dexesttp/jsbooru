@@ -16,6 +16,7 @@ router.post(
     "/clean/image/thumbnail",
     require("./api/post-clean-image-thumbnail")
 );
+router.post("/clean/tag", require("./api/post-clean-tags"));
 
 const postByUrl = require("./api/post-new-image-by-url");
 const postByFile = require("./api/post-new-image-by-file-contents");

@@ -1,9 +1,9 @@
 const database = require("../database");
 const encode = require("../utils").encode;
 
-module.exports = function(req, res) {
+module.exports = function (req, res) {
     const unsafeRequest = req.query.q ? req.query.q.split(" ") : [];
-    const request = unsafeRequest.map(tag => encode(tag));
+    const request = unsafeRequest.map((tag) => encode(tag));
     const firsts = request.slice(0, -1);
     const queried = request.length > 0 ? request[request.length - 1] : "";
     if (queried === "" || queried === "*") {
@@ -40,7 +40,7 @@ module.exports = function(req, res) {
         Promise.all(
             results.map((tag) => {
                 return new Promise(function (resolve, reject) {
-                    database.getCountByTagList(tag.name).then((count) => {
+                    database.getTagCount(tag.name).then((count) => {
                         resolve({
                             name: tag.name,
                             type: tag.type || "no-type",
