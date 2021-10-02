@@ -163,6 +163,14 @@ menu.main li {
   flex-wrap: nowrap;
 }
 
+.pages a {
+  display: block;
+  text-decoration: inherit;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+}
+
 #footer {
   text-align: center;
 }

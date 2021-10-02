@@ -15,6 +15,7 @@ Vue.component("page-box", {
             default: 0,
             type: Number,
         },
+        currTags: String,
     },
     computed: {
         pages: function () {
@@ -33,11 +34,6 @@ Vue.component("page-box", {
                 curr++;
             }
             return array;
-        },
-    },
-    methods: {
-        selectPage: function (page) {
-            this.$emit("select", page.value);
         },
     },
 });

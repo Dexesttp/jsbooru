@@ -48,22 +48,22 @@
     		class="post-preview"
     		itemscope
     		itemtype="http://schema.org/ImageObject"
-    		v-bind:id="'post_' + image.id"
-    		v-bind:data-id="image.id">
-    	<a @click="selectImage()">
-    		<img
-    				itemprop="thumbnailUrl"
-    					:src="image.thumbnail"
-    					:alt="image.tags"
-    					:title="image.tags" />
-    	</a>
+    		:id="'post_' + image.id"
+    		:data-id="image.id">
+    	<router-link :to="'/view/' + image.id">
+    		<img itemprop="thumbnailUrl" :src="image.thumbnail" :alt="image.tags" :title="image.tags" />
+    	</router-link>
     </article>
   </script>
 
   <script type="text/x-template" id="pagebox-template">
     <nav class="pages">
     	<ul>
-    		<li v-for="page in pages" :class="{ selected: page.selected }" @click="selectPage(page)">{{page.identifier}}</li>
+    		<li v-for="page in pages" :class="{ selected: page.selected }">
+    			<router-link :to="'/search?s=' + page.value + '&q=' + currTags">
+    				{{page.identifier}}
+    			</router-link>
+    		</li>
     	</ul>
     </nav>
   </script>
@@ -158,9 +158,9 @@
     <div id="content">
     	<section id="search">
     		<h2>{{count}} results</h2>
-    		<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
+    		<page-box :pageCount="20" :start="pos" :count="count" :currTags="currTags" />
     		<image-thumbnail @select="selectImage" v-for="image in images" :image="image" />
-    		<page-box @select="selectPage" :pageCount="20" :start="pos" :count="count" />
+    		<page-box :pageCount="20" :start="pos" :count="count" :currTags="currTags" />
     	</section>
     	<aside>
     		<search-box @select="setRequest" :current="currTags"></search-box>
