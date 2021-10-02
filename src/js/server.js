@@ -1,6 +1,6 @@
 const busboy = require("connect-busboy");
 const express = require("express");
-const fs = require('fs');
+const fs = require("fs");
 const path = require("path");
 
 const confHelper = require("./config");
@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(busboy());
 
-if(!confHelper.initConfig()) {
+if (!confHelper.initConfig()) {
     console.error("There was an error reading the configuration file.");
     process.exit(0);
 }
@@ -23,10 +23,12 @@ app.use("/img", express.static(config.imageFolder));
 app.use("/api", require("./api"));
 routes.init(app);
 
-app.listen(config.port, config.host, function() {
+app.listen(config.port, config.host, function () {
     console.info(`Started application on http://${config.host}:${config.port}`);
-}).on("error", function(err) {
+}).on("error", function (err) {
     console.error(`Server error : ${err.message}`);
-    console.info("Error opening the server. Are you sure the given port is valid ?");
+    console.info(
+        "Error opening the server. Are you sure the given port is valid ?"
+    );
     process.exit(0);
 });

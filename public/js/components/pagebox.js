@@ -14,19 +14,21 @@ Vue.component("page-box", {
         count: {
             default: 0,
             type: Number,
-        }
+        },
     },
     computed: {
-        pages: function() {
+        pages: function () {
             var arrayCount = Math.ceil(this.count / this.pageCount);
             var array = [];
             var curr = 0;
-            while(curr < arrayCount){
-                var value = curr*this.pageCount;
+            while (curr < arrayCount) {
+                var value = curr * this.pageCount;
                 array.push({
-                    identifier: curr+1,
+                    identifier: curr + 1,
                     value: value,
-                    selected: (this.start <= value && value < this.start + this.pageCount) 
+                    selected:
+                        this.start <= value &&
+                        value < this.start + this.pageCount,
                 });
                 curr++;
             }
@@ -34,8 +36,8 @@ Vue.component("page-box", {
         },
     },
     methods: {
-        selectPage: function(page) {
+        selectPage: function (page) {
             this.$emit("select", page.value);
         },
-    }
+    },
 });

@@ -7,11 +7,11 @@ Vue.component("sidebar-tags", {
         tags: Array,
     },
     methods: {
-        searchTag: function(tagName) {
-            this.$emit('select', String(tagName));
+        searchTag: function (tagName) {
+            this.$emit("select", String(tagName));
         },
-        deleteTag: function(tagName) {
-            this.$emit('delete', String(tagName));
-        }
-    }
+        deleteTag: function (tagName) {
+            this.$emit("delete", String(tagName));
+        },
+    },
 });

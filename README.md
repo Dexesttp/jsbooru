@@ -14,9 +14,9 @@ This project was originally made for a raspberry based Booru board.
 
 Here is a list of feature we would want to integrate to JSBooru - starting from the most obvious ones to the most advanced !
 
-- [X] Upload pictures, picture info (such as source)
-- [X] Add tags to pictures
-- [X] Search by tags
+- [x] Upload pictures, picture info (such as source)
+- [x] Add tags to pictures
+- [x] Search by tags
 - [ ] Tag categories
 - [ ] User login and options (exclude tags, disable comments, ...)
 - [ ] Score/favourites sytem and related searches
@@ -46,7 +46,7 @@ An example file is given as `config.default.json`
 
 The end goal is to have server-wide conigurations such as :
 
-- [X] Where the files are stored.
+- [x] Where the files are stored.
 - [ ] The need for user login to do some actions (post pictures, add tags, add notes, write comments).
 - [ ] Whether to self-host or remote-host the files with things like imgur.
 - [ ] Default user/admin options, so you don't have to login on your own server.

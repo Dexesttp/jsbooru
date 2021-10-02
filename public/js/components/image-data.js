@@ -6,17 +6,17 @@ Vue.component("image-data", {
         image: {
             type: Object,
             default: {},
-        }
+        },
     },
     methods: {
-        editRating: function(value) {
+        editRating: function (value) {
             this.$emit("editRating", value);
         },
-        editUser: function(value) {
+        editUser: function (value) {
             this.$emit("editUser", value);
         },
-        editSource: function(value) {
+        editSource: function (value) {
             this.$emit("editSource", value);
-        }
+        },
     },
 });

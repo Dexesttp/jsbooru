@@ -1,8 +1,8 @@
 "use strict";
 
-var Search = Vue.component('main-search', {
+var Search = Vue.component("main-search", {
     template: "#search-template",
-    data: function() {
+    data: function () {
         return {
             currTags: "",
             pos: 0,
@@ -12,26 +12,26 @@ var Search = Vue.component('main-search', {
             loaded: false,
         };
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
-        init: function() {
+        init: function () {
             this.currTags = this.$route.query.q || "";
             this.pos = +(this.$route.query.s || "");
             this.getItems();
         },
-        getItems: function() {
+        getItems: function () {
             var self = this;
             var ajax = new XMLHttpRequest();
-            if(this.currTags)
-                ajax.open('GET', "/api/image?q=" + this.currTags + "&s=" + this.pos);
-            else
-                ajax.open('GET', "/api/image?s=" + this.pos);
-            ajax.addEventListener('loadend', function(data) {
+            if (this.currTags)
+                ajax.open(
+                    "GET",
+                    "/api/image?q=" + this.currTags + "&s=" + this.pos
+                );
+            else ajax.open("GET", "/api/image?s=" + this.pos);
+            ajax.addEventListener("loadend", function (data) {
                 var json = JSON.parse(this.responseText);
                 self.count = json.count;
-                self.images = json.result.map(function(image) {
+                self.images = json.result.map(function (image) {
                     return {
                         id: image._id,
                         link: `/view?id=${image._id}`,
@@ -39,43 +39,43 @@ var Search = Vue.component('main-search', {
                         tags: image.tags ? image.tags.join(" ") : "",
                     };
                 });
-                self.tags = json.tags.sort(function(a, b) {
+                self.tags = json.tags.sort(function (a, b) {
                     var nameA = a.name.toUpperCase();
                     var nameB = b.name.toUpperCase();
-                    if (nameA < nameB)return -1;
-                    if (nameA > nameB)return 1;
+                    if (nameA < nameB) return -1;
+                    if (nameA > nameB) return 1;
                     return 0;
                 });
             });
             ajax.send();
         },
-        selectImage: function(imageID) {
+        selectImage: function (imageID) {
             router.push("/view/" + imageID);
         },
-        selectPage: function(start) {
+        selectPage: function (start) {
             router.push("/search?s=" + start + "&q=" + this.currTags);
         },
-        setRequest: function(request) {
+        setRequest: function (request) {
             this.currTags = request.trim();
             this.goTo();
         },
-        addTag: function(tag) {
+        addTag: function (tag) {
             this.currTags = (this.currTags + " " + tag).trim();
             this.goTo();
         },
-        goTo: function() {
+        goTo: function () {
             router.push("/search?q=" + this.currTags);
-        }
+        },
     },
-    created: function(to, from) {
+    created: function (to, from) {
         this.init();
     },
     watch: {
-        '$route.query.q': function(to, from) {
-            if(to !== from) this.init();
+        "$route.query.q": function (to, from) {
+            if (to !== from) this.init();
         },
-        '$route.query.s': function(to, from) {
-            if(to !== from) this.init();
-        }
-    }
+        "$route.query.s": function (to, from) {
+            if (to !== from) this.init();
+        },
+    },
 });
