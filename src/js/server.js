@@ -24,12 +24,14 @@ app.use("/thumb", express.static(config.thumbnailFolder));
 app.use("/api", require("./api"));
 routes.init(app);
 
-app.listen(config.port, config.host, function () {
-    console.info(`Started application on http://${config.host}:${config.port}`);
-}).on("error", function (err) {
-    console.error(`Server error : ${err.message}`);
-    console.info(
-        "Error opening the server. Are you sure the given port is valid ?"
-    );
-    process.exit(0);
-});
+for (const host of config.host) {
+    app.listen(host.port, host.url, () => {
+        console.info(`Started application on http://${host.url}:${host.port}`);
+    }).on("error", function (err) {
+        console.error(`Server error : ${err.message}`);
+        console.info(
+            "Error opening the server. Are you sure the given port is valid ?"
+        );
+        process.exit(0);
+    });
+}

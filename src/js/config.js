@@ -5,9 +5,13 @@ const config = {
     database: "",
     imageFolder: "",
     staticFolder: "",
-    host: "localhost",
     thumbnailFolder: "",
-    port: 8000,
+    host: [
+        {
+            url: "localhost",
+            port: 8000,
+        },
+    ],
 };
 
 function checkAccess(file) {
@@ -59,8 +63,24 @@ exports.initConfig = function (extConfig) {
         "../../",
         extConfig.thumbnailFolder || "thumb"
     );
-    config.host = extConfig.host || "localhost";
-    config.port = extConfig.port || 3000;
+    if (extConfig.host && Array.isArray(extConfig.host)) {
+        config.host = extConfig.host.map((h) => ({
+            url: h.url || "localhost",
+            port: h.port || 3000,
+        }));
+    } else {
+        config.host = [
+            {
+                url: "localhost",
+                port: 3000,
+            },
+        ];
+    }
+    if (config.host.length === 0) {
+        console.error(`No valid hostname and port has been defined`);
+        return false;
+    }
+
     // Check access permissions
     if (!checkAccess(config.database)) {
         console.error(
