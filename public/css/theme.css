@@ -19,22 +19,42 @@ menu.main a:hover {
   text-decoration: underline;
 }
 
+/* Autocomplete */
+.autocomplete ul,
+.autocomplete ul li a {
+  background: #222;
+  color: #eee;
+}
+
+.autocomplete ul:before {
+  border-bottom-color: #222;
+}
+
+.autocomplete ul li a:hover,
+.autocomplete ul li.focus-list a {
+  color: #333;
+  background: #777;
+}
+
 /* Tags */
 #tags a {
-  color: lightblue;
   text-decoration: none;
 }
 #tags a:hover {
   text-decoration: underline;
 }
-#tags .wiki {
-  margin-right: 10px;
-}
-#tags .name {
-  margin-right: 5px;
-}
 #tags .post-count {
   color: #999;
+}
+
+.tag {
+  color: white;
+}
+.tag.all-type {
+  color: lightblue;
+}
+.tag.no-type {
+  color: lightblue;
 }
 
 /* Page selection */

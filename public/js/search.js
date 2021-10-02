@@ -35,8 +35,8 @@ var Search = Vue.component("main-search", {
                         };
                     });
                     self.tags = response.body.tags.sort(function (a, b) {
-                        if (a < b) return -1;
-                        if (a > b) return 1;
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
                         return 0;
                     });
                 })

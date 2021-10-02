@@ -11,7 +11,7 @@ Vue.component("search-box", {
     methods: {
         formatData: function (data) {
             return `<div class="reply">
-                <span class="title">${data.name}</span>
+                <span class="title tag ${data.type}">${data.name}</span>
                 <span class="count">(${data.count})</span>
             </div>`;
         },

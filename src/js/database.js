@@ -105,6 +105,13 @@ exports.getTags = function (tagName, callback) {
     callback(result);
 };
 
+exports.getTagDataByName = function (tagName, callback) {
+    const result = exports.tags.find(function (tag) {
+        return tag.name === tagName;
+    });
+    callback(result);
+};
+
 exports.setTag = function (pictureID, tagName) {
     let image_index = exports.images.findIndex(function (i) {
         return i._id === pictureID;

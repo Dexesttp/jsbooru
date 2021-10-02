@@ -91,9 +91,9 @@
     	<h2>Tags</h2>
     	<ul>
     		<li v-for="tag in tags">
-    			<a class="wiki" v-bind:href="tag.wiki">?</a>
-    			<a class="name" @click="searchTag(tag.name)">{{tag.name}}</a>
-    			<span class="post-count">{{tag.count}}</span>
+    			<a :class="['wiki', 'tag', tag.type]" :href="tag.wiki">?</a>
+    			<a :class="['name', 'tag', tag.type]" @click="searchTag(tag.name)">{{tag.name}}</a>
+    			<span :class="['post-count', 'tag', tag.type]">{{tag.count}}</span>
     			<a v-if="allowDelete" class="delete" @click="deleteTag(tag.name)">-</a>
     		</li>
     	</ul>

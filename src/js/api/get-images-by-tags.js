@@ -14,10 +14,18 @@ module.exports = function (req, res) {
                     .filter((i, idx, arr) => {
                         return arr.indexOf(i) === idx;
                     })
-                    .map((tag) => {
+                    .map((tagName) => {
                         return new Promise(function (resolve, reject) {
-                            database.getCountByTagList(tag, (count) => {
-                                resolve({ name: tag, count: count });
+                            database.getTagDataByName(tagName, (tagData) => {
+                                database.getCountByTagList(tagName, (count) => {
+                                    resolve({
+                                        name: tagName,
+                                        type:
+                                            (tagData ? tagData.type : "") ||
+                                            "no-type",
+                                        count: count,
+                                    });
+                                });
                             });
                         });
                     })

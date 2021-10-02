@@ -30,7 +30,7 @@ Vue.component("add-box", {
         formatData: function (data) {
             if (data.match) {
                 return `<div class="reply">
-                    <span class="title">${data.name}</span>
+                    <span class="title tag ${data.type}">${data.name}</span>
                     <span class="count">(${data.count})</span>
                 </div>`;
             }
