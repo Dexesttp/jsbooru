@@ -418,6 +418,31 @@ exports.getPicture = function (pictureID) {
 };
 
 /**
+ * Get the information about which pictures preceed and follow another from a picture ID
+ * @param {string} pictureID the ID of the picture to find
+ * @returns {Promise<{ previous_id: string | null, next_id: string | null }>} the promise of the position data. Rejects if the picture doesn't exist
+ */
+exports.getPicturePrevNextInformation = function (pictureID) {
+    return new Promise((resolve, reject) => {
+        let image_index = exports.images.findIndex(function (i) {
+            return i._id === pictureID;
+        });
+        if (image_index === -1) {
+            reject();
+            return;
+        }
+
+        const previous = exports.images[image_index - 1];
+        const next = exports.images[image_index + 1];
+
+        resolve({
+            previous_id: previous ? previous._id : null,
+            next_id: next ? next._id : null,
+        });
+    });
+};
+
+/**
  * Get part of the picture list that matches the given tag.
  * @param {string[]} tagList the tag names.
  * @param {number} skip the number of items to skip.

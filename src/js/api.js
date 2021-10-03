@@ -4,6 +4,10 @@ const router = express.Router();
 // GET
 router.get("/tags", require("./api/get-tags-by-partial-names"));
 router.get("/tag/:name", require("./api/get-tag-data-by-name"));
+router.get(
+    "/image/:id/navigation",
+    require("./api/get-image-navigation-data-by-id")
+);
 router.get("/image/:id", require("./api/get-image-by-id"));
 router.get("/image", require("./api/get-images-by-tags"));
 router.get("/clean/image", require("./api/get-clean-image"));

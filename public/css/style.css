@@ -141,6 +141,27 @@ menu.main li {
 }
 
 /* page selection */
+#image .navigation {
+  margin: 10px 0px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#image .navigation a {
+  display: block;
+  text-decoration: inherit;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0.1em 0;
+  min-width: 1.5em;
+  min-height: 1.25em;
+  text-align: center;
+  flex-wrap: nowrap;
+}
+
 .pages {
   margin: 10px 0px;
   width: 100%;

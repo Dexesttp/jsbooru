@@ -146,20 +146,41 @@
   <script type="text/x-template" id="view-template">
     <div id="content">
     	<section id="image">
-    		<img v-if="image" :src="image.url" :class="{ limit: limitSize }" @click="toggleSizeLimit" />
+    		<nav
+    			v-if="navigation"
+    			class="navigation"
+    		>
+    			<router-link
+    				v-if="navigation.previous_id"
+    				:to="'/view/' + navigation.previous_id"
+    			>
+    				&lt; previous
+    			</router-link>
+    			<router-link
+    				v-if="navigation.next_id"
+    				:to="'/view/' + navigation.next_id"
+    			>
+    				next &gt;
+    			</router-link>
+    		</nav>
+    		<img v-if="image"
+    			:src="image.url"
+    			:class="{ limit: limitSize }"
+    			@click="toggleSizeLimit"
+    		/>
     	</section>
-    	<aside>
-    		<search-box @select="setRequest"></search-box>
-    		<sidebar-tags @select="setRequest" @delete="deleteTag" :tags="tags" :allowDelete="true"></sidebar-tags>
-    		<add-box @select="addTag"></add-box>
-    		<image-data v-if="image" :image="image"
-    				@editRating="editRating"
-    				@editUser="editUser"
-    				@editSource="editSource"
-    				@deleteImage="deleteImage">
-    		</image-data>
-    	</aside>
-    </div>
+     	<aside>
+     		<search-box @select="setRequest"></search-box>
+     		<sidebar-tags @select="setRequest" @delete="deleteTag" :tags="tags" :allowDelete="true"></sidebar-tags>
+     		<add-box @select="addTag"></add-box>
+     		<image-data v-if="image" :image="image"
+     				@editRating="editRating"
+     				@editUser="editUser"
+     				@editSource="editSource"
+     				@deleteImage="deleteImage">
+     		</image-data>
+     	</aside>
+     </div>
   </script>
 
   <script type="text/x-template" id="wiki-template">

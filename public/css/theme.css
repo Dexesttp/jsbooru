@@ -64,7 +64,8 @@ menu.main a:hover {
 }
 
 /* Page selection */
-.pages li {
+.pages li,
+#image .navigation a {
   border: 1px solid black;
   background-color: #555;
   color: #eee;

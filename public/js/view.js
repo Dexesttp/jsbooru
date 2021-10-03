@@ -6,6 +6,7 @@ var View = Vue.component("main-view", {
         return {
             id: "",
             image: null,
+            navigation: null,
             tags: [],
             limitSize: true,
         };
@@ -28,6 +29,14 @@ var View = Vue.component("main-view", {
                         if (nameA > nameB) return 1;
                         return 0;
                     });
+                    this.$http
+                        .get("image/" + this.id + "/navigation")
+                        .then(function (navigation) {
+                            self.navigation = navigation.body;
+                        })
+                        .then(undefined, function (error) {
+                            console.warn(error);
+                        });
                 })
                 .then(undefined, function (error) {
                     console.warn(error);
