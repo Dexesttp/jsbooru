@@ -47,6 +47,13 @@ menu.main a:hover {
   color: #999;
 }
 
+.download-picture a {
+  color: #999;
+}
+.download-picture a:hover {
+  color: #bbb;
+}
+
 .tag {
   color: white;
 }

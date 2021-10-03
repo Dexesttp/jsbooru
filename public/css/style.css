@@ -97,6 +97,10 @@ menu.main li {
   font-size: 0.8em;
 }
 
+.delete-picture button {
+  margin-top: 20px;
+}
+
 /* View */
 #image img.limit {
   max-width: 95%;

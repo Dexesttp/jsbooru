@@ -133,11 +133,11 @@
     	<editable-text unknown="UNKNOWN"
     			title="Uploader: " :value="image.user" :url="'/user/' + image.user"
     			:canEdit="true" @edit="editUser" />
-    	<div>
+    	<div class="download-picture">
     		<a :href="image.url" target="_blank">Download picture</a>
     	</div>
-    	<div>
-    		<a href="#" @click="deleteImage()">Delete picture</a>
+    	<div class="delete-picture">
+    		<button @click="deleteImage()">Delete picture</button>
     	</div>
     </section>
   </script>
