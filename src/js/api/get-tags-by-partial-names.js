@@ -1,5 +1,5 @@
 const database = require("../database");
-const encode = require("../utils").encode;
+const { encode, startsWithRegex } = require("../utils");
 
 module.exports = function (req, res) {
     const unsafeRequest = req.query.q ? req.query.q.split(" ") : [];
@@ -21,7 +21,7 @@ module.exports = function (req, res) {
         ]);
         return;
     }
-    database.getTags(queried).then(function (results) {
+    database.getTagsContainingText(queried).then(function (results) {
         if (results.length === 0) {
             res.send([
                 {
@@ -50,6 +50,14 @@ module.exports = function (req, res) {
                 });
             })
         ).then((tags) => {
+            const starts_with_regex = startsWithRegex(queried);
+            tags.sort((a, b) => {
+                const a_starts = starts_with_regex.test(a.name);
+                const b_starts = starts_with_regex.test(b.name);
+                if (a_starts && !b_starts) return -1;
+                if (!a_starts && b_starts) return 1;
+                return b.count - a.count;
+            });
             res.send(
                 tags.map((r) => ({
                     result: str + r.name,

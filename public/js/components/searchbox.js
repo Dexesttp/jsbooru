@@ -16,11 +16,7 @@ Vue.component("search-box", {
             </div>`;
         },
         processData: function (data) {
-            return data.sort(function (d1, d2) {
-                if (d1.count > d2.count) return -1;
-                if (d1.count < d2.count) return 1;
-                return 0;
-            });
+            return data;
         },
         getData: function (tag) {
             this.$emit("select", tag.result);

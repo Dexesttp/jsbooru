@@ -1,8 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const config = require("./config").config;
-const uuid = require("./utils").uuid;
-const toStartByRegex = require("./utils").toStartByRegex;
+const { uuid, containsRegex } = require("./utils");
 
 const collectionNames = {
     images: "pictures",
@@ -252,13 +251,16 @@ exports.deletePicture = function (pictureID) {
     });
 };
 
-exports.getTags = function (tagName) {
+/**
+ * Get the list of tags containing a given text.
+ * @param {string} partialTagName The partial name to match against.
+ * @returns {Promise<TagData[]>} A promise of the list of matched tags, in no particular order
+ */
+exports.getTagsContainingText = function (partialTagName) {
     return new Promise((resolve) => {
-        const regex = new RegExp(
-            `^${tagName.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}`
-        );
+        const contains_regex = containsRegex(partialTagName);
         const result = exports.tags.filter(function (tag) {
-            return regex.test(tag.name);
+            return contains_regex.test(tag.name);
         });
         resolve(result);
     });

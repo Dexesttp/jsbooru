@@ -10,11 +10,6 @@ Vue.component("add-box", {
     },
     methods: {
         processData: function (data) {
-            data.sort(function (d1, d2) {
-                if (d1.count > d2.count) return -1;
-                if (d1.count < d2.count) return 1;
-                return 0;
-            });
             if (data[0].match) {
                 var original = data[0].query.split(" ").pop();
                 data.push({

@@ -27,16 +27,32 @@ exports.encode = entities.encode;
 
 /**
  * Transorms the given string into a regexpr that matches anything starting by the string.
- * @param {string} data the string to encode
- * @return {Promise<RegExp>} A promise on the encoded regexpr
+ * @param {string} string_to_match the string to encode and match
+ * @return {RegExp} The regexp wanted
  */
-exports.toStartByRegex = function (data) {
-    if (!data.includes("/")) {
-        const cleanData = data.replace(
+exports.startsWithRegex = function (string_to_match) {
+    if (!string_to_match.includes("/")) {
+        const cleanData = string_to_match.replace(
             /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
             "\\$&"
         );
-        return Promise.resolve(new RegExp(`^${cleanData}`));
+        return new RegExp(`^${cleanData}`);
     }
-    return Promise.reject(new Error("The input string can't contain a slash."));
+    throw new Error("The input string can't contain a slash.");
+};
+
+/**
+ * Transorms the given string into a regexpr that matches anything containing the string.
+ * @param {string} string_to_match the string to encode and match
+ * @return {RegExp} The regexp wanted
+ */
+exports.containsRegex = function (string_to_match) {
+    if (!string_to_match.includes("/")) {
+        const cleanData = string_to_match.replace(
+            /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+            "\\$&"
+        );
+        return new RegExp(`${cleanData}`);
+    }
+    throw new Error("The input string can't contain a slash.");
 };
