@@ -35,5 +35,6 @@ router.post("/image", function (req, res) {
 // DELETE
 router.delete("/image/:id", require("./api/delete-image-by-id"));
 router.delete("/image/:id/:tagname", require("./api/delete-tag-from-image"));
+router.delete("/tag/:name", require("./api/delete-tag-from-database"));
 
 module.exports = router;

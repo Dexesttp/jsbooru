@@ -150,6 +150,24 @@ exports.updateTag = function (tagName, tagData) {
 };
 
 /**
+ * Deletes an existing tag from all the databases at once
+ * @param {string} tagName the name of the tag to delete
+ * @return {Promise<void>} Resolves when the operation completes
+ */
+exports.deleteTagFromAllDatabase = function (tagName) {
+    return new Promise((resolve) => {
+        exports.tags = exports.tags.filter((t) => t.name != tagName);
+        exports.tagcounts = exports.tagcounts.filter((t) => t.name != tagName);
+        exports.tagwiki = exports.tagwiki.filter((t) => t.name != tagName);
+        for (const image of exports.images) {
+            image.tags = image.tags.filter((t) => t != tagName);
+        }
+        saveToMem();
+        resolve();
+    });
+};
+
+/**
  * Inserts a new picture based on the picture data.
  * @param {{ thumbnail: string, tags: string[]}} pictureData the picture data to insert
  * @return {Promise<string>} the inserted picture's ID.
