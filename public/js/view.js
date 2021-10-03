@@ -83,9 +83,11 @@ var View = Vue.component("main-view", {
             this.limitSize = !this.limitSize;
         },
         deleteImage: function () {
-            this.$http.delete("image/" + this.id).then(function () {
-                router.push("/");
-            });
+            if (confirm("Delete this image ?")) {
+                this.$http.delete("image/" + this.id).then(function () {
+                    router.push("/");
+                });
+            }
         },
     },
     created: function (to, from) {
