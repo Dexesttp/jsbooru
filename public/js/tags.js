@@ -11,6 +11,9 @@ var Tags = Vue.component("main-tags", {
         init: function () {
             this.getData();
         },
+        setRequest: function (request) {
+            router.push("/search?q=" + request);
+        },
         getData: function () {
             var self = this;
             this.$http
