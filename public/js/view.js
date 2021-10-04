@@ -9,6 +9,7 @@ var View = Vue.component("main-view", {
             navigation: null,
             tags: [],
             limitSize: true,
+            handler: null,
         };
     },
     methods: {
@@ -98,9 +99,32 @@ var View = Vue.component("main-view", {
                 });
             }
         },
+        handleKeyUp(e) {
+            if (e.target != document.body) {
+                return;
+            }
+            if (
+                e.key === "p" &&
+                this.navigation &&
+                this.navigation.previous_id
+            ) {
+                router.push("/view/" + this.navigation.previous_id);
+            }
+            if (e.key === "n" && this.navigation && this.navigation.next_id) {
+                router.push("/view/" + this.navigation.next_id);
+            }
+        },
     },
-    created: function (to, from) {
+    created: function () {
+        const component = this;
         this.init();
+        this.handler = function (e) {
+            component.handleKeyUp(e);
+        };
+        window.addEventListener("keyup", this.handler);
+    },
+    beforeDestroy() {
+        window.removeEventListener("keyup", this.handler);
     },
     watch: {
         $route: function (to, from) {
