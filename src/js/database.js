@@ -219,6 +219,12 @@ exports.getAllPictures = function () {
     });
 };
 
+exports.getAllTags = function () {
+    return new Promise((resolve) => {
+        resolve(exports.tags);
+    });
+};
+
 /**
  * Get the tag count for an unique tag.
  * @param {string} tagName the name of the tag to retrieve the count for.

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // GET
+router.get("/tags/list", require("./api/get-all-tags"));
 router.get("/tags", require("./api/get-tags-by-partial-names"));
 router.get("/tag/:name", require("./api/get-tag-data-by-name"));
 router.get(

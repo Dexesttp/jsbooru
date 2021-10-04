@@ -16,6 +16,7 @@
           <menu class="main">
             <ul>
               <li><router-link to="/search">Posts</router-link></li>
+              <li><router-link to="/tags">Tags</router-link></li>
               <li><router-link to="/upload">Upload</router-link></li>
             </ul>
           </menu>
@@ -221,6 +222,28 @@
     </div>
   </script>
 
+  <script type="text/x-template" id="tags-template">
+    <div id="content">
+    	<section id="search">
+    		<h2>{{entries.length}} tags</h2>
+    		<ul>
+    			<li v-for="tag in entries">
+    				<router-link :class="['wiki', 'tag', tag.type]"  :to="'/wiki/' + tag.name">
+    					?
+    				</router-link>
+    				<router-link :class="['name', 'tag', tag.type]"  :to="'/search?q=' + tag.name">
+    					{{tag.name}}
+    				</router-link>
+    				<span :class="['post-count', 'tag', tag.type]">{{tag.count}}</span>
+    			</li>
+    		</ul>
+    	</section>
+    	<aside>
+    		<search-box @select="setRequest" :current="currTags"></search-box>
+    	</aside>
+    </div>
+  </script>
+
   <script type="text/x-template" id="upload-template">
     <div id="content">
     	<section id="upload">
@@ -248,6 +271,7 @@
   <script src="/js/components/sidebar-tags.js"></script>
   <script src="/js/components/thumbnail.js"></script>
   <script src="/js/search.js"></script>
+  <script src="/js/tags.js"></script>
   <script src="/js/upload.js"></script>
   <script src="/js/view.js"></script>
   <script src="/js/wiki.js"></script>
