@@ -7,6 +7,10 @@ Vue.component("editable-text", {
             type: String,
             default: "",
         },
+        defaultWhenNotEdited: {
+            type: String,
+            default: "",
+        },
         value: {
             type: String,
             default: "",
@@ -44,8 +48,11 @@ Vue.component("editable-text", {
         },
     },
     watch: {
-        value: function () {
-            this.currentValue = this.value;
+        value: {
+            immediate: true,
+            handler: function () {
+                this.currentValue = this.value;
+            }
         },
         currentValue: function () {
             if (this.allowedEntries) this.endEdit();

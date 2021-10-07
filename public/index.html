@@ -34,12 +34,13 @@
   <!-- Components -->
   <script type="text/x-template" id="editable-text-template">
     <div class="editable-text">{{title}}
-    	<input type="text" v-if="isEdited && !allowedEntries" v-model="currentValue" @keyup.enter="endEdit" />
+    	<input type="text" v-if="isEdited && !allowedEntries" v-model="currentValue" :value="currentValue" @keyup.enter="endEdit">
     	<select v-if="isEdited && allowedEntries" v-model="currentValue">
     		<option v-for="entry in allowedEntries">{{entry}}</option>
     	</select>
-    	<a v-if="value && !isEdited" :href="url">{{value}}</a>
-    	<a v-if="!value && !isEdited">{{unknown}}</a>
+    	<a v-if="value && defaultWhenNotEdited && !isEdited" :href="url">{{defaultWhenNotEdited}}</a>
+    	<a v-else-if="value && !isEdited" :href="url">{{value}}</a>
+    	<a v-else-if="!value && !isEdited">{{unknown}}</a>
     	<a class="edit" v-if="canEdit && !isEdited" @click="startEdit">(edit)</a>
     </div>
   </script>
@@ -129,7 +130,7 @@
     			:canEdit="true" @edit="editRating"
     			:allowedEntries="['safe', 'questionnable', 'explicit']" />
     	<editable-text unknown="UNKNOWN"
-    			title="Source: " :value="image.source" :url="image.source"
+    			title="Source: " default-when-not-edited="click to see" :value="image.source" :url="image.source"
     			:canEdit="true" @edit="editSource" />
     	<editable-text unknown="UNKNOWN"
     			title="Uploader: " :value="image.user" :url="'/user/' + image.user"
