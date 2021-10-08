@@ -332,7 +332,9 @@ exports.insertTagOnPicture = function (pictureID, tagName) {
             exports.insertTag(tagName);
         }
 
-        exports.images[image_index].tags.push(tagName);
+        if (!exports.images[image_index].tags.some((t) => t === tagName)) {
+            exports.images[image_index].tags.push(tagName);
+        }
         saveToMem();
         resolve();
     });
