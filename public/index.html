@@ -229,12 +229,15 @@
     		<h2>{{entries.length}} tags</h2>
     		<ul>
     			<li v-for="tag in entries">
+    				<button @click="deleteTag(tag)">Delete tag</button>
     				<router-link :class="['wiki', 'tag', tag.type]"  :to="'/wiki/' + tag.name">
-    					?
+    					See wiki
     				</router-link>
+    				&nbsp;
     				<router-link :class="['name', 'tag', tag.type]"  :to="'/search?q=' + tag.name">
     					{{tag.name}}
     				</router-link>
+    				&nbsp;
     				<span :class="['post-count', 'tag', tag.type]">{{tag.count}}</span>
     			</li>
     		</ul>

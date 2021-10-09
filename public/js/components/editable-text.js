@@ -52,7 +52,7 @@ Vue.component("editable-text", {
             immediate: true,
             handler: function () {
                 this.currentValue = this.value;
-            }
+            },
         },
         currentValue: function () {
             if (this.allowedEntries) this.endEdit();
