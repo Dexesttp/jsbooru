@@ -22,8 +22,31 @@ var app = new Vue({
     },
     methods: {
         setItemsPerPage: function (newValue) {
-            console.log(newValue);
             this.itemsPerPage = newValue;
+            this.saveToLocalStorage();
         },
+        saveToLocalStorage: function () {
+            var data = {
+                itemsPerPage: this.itemsPerPage,
+            };
+            var dataAsDecodedString = JSON.stringify(data);
+            var dataAsEncodedString = btoa(dataAsDecodedString);
+            window.localStorage.setItem("options", dataAsEncodedString);
+        },
+        loadFromLocalStorage: function () {
+            var dataAsEncodedString =
+                window.localStorage.getItem("options") || "";
+            var dataAsDecodedString = atob(dataAsEncodedString) || "";
+            var data = {};
+            try {
+                data = JSON.parse(dataAsDecodedString) || {};
+            } catch {
+                // NO OP
+            }
+            this.itemsPerPage = data.itemsPerPage || 20;
+        },
+    },
+    created: function () {
+        this.loadFromLocalStorage();
     },
 }).$mount("#app");
