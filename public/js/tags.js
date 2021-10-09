@@ -15,11 +15,14 @@ var Tags = Vue.component("main-tags", {
             router.push("/search?q=" + request);
         },
         deleteTag: function (tag) {
-            // TODO
-            var self = this;
-            this.$http.delete(`tag/${tag.name}`).then(function () {
-                self.getData();
-            });
+            if (
+                confirm("Delete the tag '" + tag.name + "' and all its uses?")
+            ) {
+                var self = this;
+                this.$http.delete(`tag/${tag.name}`).then(function () {
+                    self.getData();
+                });
+            }
         },
         getData: function () {
             var self = this;
