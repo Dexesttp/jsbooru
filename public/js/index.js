@@ -17,5 +17,6 @@ var app = new Vue({
     router: router,
     data: {
         title: "JSBooru",
+        itemsPerPage: 20,
     },
 }).$mount("#app");

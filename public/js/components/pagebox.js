@@ -7,7 +7,7 @@ Vue.component("page-box", {
             default: 0,
             type: Number,
         },
-        pageCount: {
+        itemsPerPage: {
             default: 20,
             type: Number,
         },
@@ -15,21 +15,24 @@ Vue.component("page-box", {
             default: 0,
             type: Number,
         },
-        currTags: String,
+        currentTags: String,
     },
     computed: {
         pages: function () {
-            var arrayCount = Math.ceil(this.count / this.pageCount);
+            var arrayCount = Math.ceil(this.count / this.itemsPerPage);
             var array = [];
             var curr = 0;
             while (curr < arrayCount) {
-                var value = curr * this.pageCount;
+                var value = curr * this.itemsPerPage;
+                var pageUrl = "/search?s=" + value;
+                if (this.currentTags) pageUrl += "&q=" + this.currentTags;
                 array.push({
                     identifier: curr + 1,
                     value: value,
+                    url: pageUrl,
                     selected:
                         this.start <= value &&
-                        value < this.start + this.pageCount,
+                        value < this.start + this.itemsPerPage,
                 });
                 curr++;
             }

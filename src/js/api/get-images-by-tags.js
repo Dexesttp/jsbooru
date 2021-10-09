@@ -13,9 +13,11 @@ function getUniqueTags(unsafeQuery) {
 
 module.exports = function (req, res) {
     const start = +req.query.s || 0;
+    let limit = +req.query.l || 20;
+    if (limit < 1 || limit > 100) limit = 20;
     const tagsToSearch = getUniqueTags(req.query.q);
     database.getCountByTagList(tagsToSearch).then((count) => {
-        database.getPicturesByTag(tagsToSearch, start, 20).then((pics) => {
+        database.getPicturesByTag(tagsToSearch, start, limit).then((pics) => {
             Promise.all(
                 pics
                     .reduce((prev, curr) => prev.concat(curr.tags), [])

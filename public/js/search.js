@@ -2,9 +2,15 @@
 
 var Search = Vue.component("main-search", {
     template: "#search-template",
+    props: {
+        itemsPerPage: {
+            type: Number,
+            default: 20,
+        },
+    },
     data: function () {
         return {
-            currTags: "",
+            currentTags: "",
             pos: 0,
             count: 0,
             images: [],
@@ -15,7 +21,7 @@ var Search = Vue.component("main-search", {
     computed: {},
     methods: {
         init: function () {
-            this.currTags = this.$route.query.q || "";
+            this.currentTags = this.$route.query.q || "";
             this.pos = +(this.$route.query.s || "");
             this.getItems();
         },
@@ -23,7 +29,13 @@ var Search = Vue.component("main-search", {
             var self = this;
 
             this.$http
-                .get("image", { params: { s: this.pos, q: this.currTags } })
+                .get("image", {
+                    params: {
+                        s: this.pos,
+                        l: this.itemsPerPage,
+                        q: this.currentTags,
+                    },
+                })
                 .then(function (response) {
                     self.count = response.body.count;
                     self.images = response.body.result.map(function (image) {
@@ -47,19 +59,16 @@ var Search = Vue.component("main-search", {
         selectImage: function (imageID) {
             router.push("/view/" + imageID);
         },
-        selectPage: function (start) {
-            router.push("/search?s=" + start + "&q=" + this.currTags);
-        },
         setRequest: function (request) {
-            this.currTags = request.trim();
+            this.currentTags = request.trim();
             this.goTo();
         },
         addTag: function (tag) {
-            this.currTags = (this.currTags + " " + tag).trim();
+            this.currentTags = (this.currentTags + " " + tag).trim();
             this.goTo();
         },
         goTo: function () {
-            router.push("/search?q=" + this.currTags);
+            router.push("/search?q=" + this.currentTags);
         },
     },
     created: function (to, from) {

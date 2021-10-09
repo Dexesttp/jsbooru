@@ -22,7 +22,7 @@
           </menu>
         </nav>
       </header>
-      <router-view></router-view>
+      <router-view :items-per-page="itemsPerPage"></router-view>
       <footer id="footer">
         <div>
           Powered by <a href="//github.com/dexesttp/jsbooru">JSBooru</a>
@@ -62,7 +62,7 @@
     <nav class="pages">
     	<ul>
     		<li v-for="page in pages" :class="{ selected: page.selected }">
-    			<router-link :to="'/search?s=' + page.value + '&q=' + currTags">
+    			<router-link :to="page.url">
     				{{page.identifier}}
     			</router-link>
     		</li>
@@ -212,9 +212,9 @@
     <div id="content">
     	<section id="search">
     		<h2>{{count}} results</h2>
-    		<page-box :pageCount="20" :start="pos" :count="count" :currTags="currTags" />
+    		<page-box :items-per-page="itemsPerPage" :start="pos" :count="count" :current-tags="currentTags" />
     		<image-thumbnail @select="selectImage" v-for="image in images" :image="image" />
-    		<page-box :pageCount="20" :start="pos" :count="count" :currTags="currTags" />
+    		<page-box :items-per-page="itemsPerPage" :start="pos" :count="count" :current-tags="currentTags" />
     	</section>
     	<aside>
     		<search-box @select="setRequest" :current="currTags"></search-box>
