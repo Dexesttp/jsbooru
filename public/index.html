@@ -18,11 +18,15 @@
               <li><router-link to="/search">Posts</router-link></li>
               <li><router-link to="/tags">Tags</router-link></li>
               <li><router-link to="/upload">Upload</router-link></li>
+              <li><router-link to="/options">Options</router-link></li>
             </ul>
           </menu>
         </nav>
       </header>
-      <router-view :items-per-page="itemsPerPage"></router-view>
+      <router-view
+        :items-per-page="itemsPerPage"
+        @set-items-per-page="setItemsPerPage($event)"
+      ></router-view>
       <footer id="footer">
         <div>
           Powered by <a href="//github.com/dexesttp/jsbooru">JSBooru</a>
@@ -217,7 +221,7 @@
     		<page-box :items-per-page="itemsPerPage" :start="pos" :count="count" :current-tags="currentTags" />
     	</section>
     	<aside>
-    		<search-box @select="setRequest" :current="currTags"></search-box>
+    		<search-box @select="setRequest" :current="currentTags"></search-box>
     		<sidebar-tags @select="addTag" :tags="tags"></sidebar-tags>
     	</aside>
     </div>
@@ -262,6 +266,17 @@
     </div>
   </script>
 
+  <script type="text/x-template" id="options-template">
+    <div id="content">
+    	<section id="upload">
+    		<input type="number" :value="this.itemsPerPage" @input="setItemsPerPage($event.target.value)" />
+    	</section>
+    	<aside>
+    		Options
+    	</aside>
+    </div>
+  </script>
+
   <script src="/lib/vue.js"></script>
   <script src="/lib/vue-resource.min.js"></script>
   <script src="/lib/vue-router.js"></script>
@@ -277,6 +292,7 @@
   <script src="/js/search.js"></script>
   <script src="/js/tags.js"></script>
   <script src="/js/upload.js"></script>
+  <script src="/js/options.js"></script>
   <script src="/js/view.js"></script>
   <script src="/js/wiki.js"></script>
   <script src="/js/index.js"></script>

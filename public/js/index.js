@@ -5,6 +5,7 @@ var router = new VueRouter({
         { path: "/search", component: Vue.component("main-search") },
         { path: "/tags", component: Vue.component("main-tags") },
         { path: "/upload", component: Vue.component("main-upload") },
+        { path: "/options", component: Vue.component("main-options") },
         { path: "/view/:id", component: Vue.component("main-view") },
         { path: "/wiki/:name", component: Vue.component("main-wiki") },
         { path: "/", redirect: "/search" },
@@ -18,5 +19,11 @@ var app = new Vue({
     data: {
         title: "JSBooru",
         itemsPerPage: 20,
+    },
+    methods: {
+        setItemsPerPage: function (newValue) {
+            console.log(newValue);
+            this.itemsPerPage = newValue;
+        },
     },
 }).$mount("#app");

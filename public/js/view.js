@@ -116,7 +116,7 @@ var View = Vue.component("main-view", {
         },
     },
     created: function () {
-        const component = this;
+        var component = this;
         this.init();
         this.handler = function (e) {
             component.handleKeyUp(e);
