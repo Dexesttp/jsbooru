@@ -55,7 +55,7 @@ Vue.component("editable-text", {
             },
         },
         currentValue: function () {
-            if (this.allowedEntries) this.endEdit();
+            if (this.isEdited && this.allowedEntries) this.endEdit();
         },
     },
 });
