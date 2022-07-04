@@ -1,5 +1,4 @@
-const Entities = require("html-entities").AllHtmlEntities;
-const entities = new Entities();
+const entities = require("html-entities");
 
 /**
  * Returns a new rfc4122-v4 compliant UUID
