@@ -36,9 +36,9 @@ const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"];
 
 module.exports = function (req, res) {
     req.pipe(req.busboy);
-    req.busboy.on("file", function (fieldname, file, filename) {
+    req.busboy.on("file", function (fieldname, file, fileMetadata) {
         const urlID = uuid();
-        const extension = path.extname(filename);
+        const extension = path.extname(fileMetadata.filename);
         // Only allow certain extensions
         if (!allowedExtensions.some((e) => e === extension)) {
             res.status(500);
